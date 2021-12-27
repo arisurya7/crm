@@ -1,12 +1,106 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <!-- Google Fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/fe118aecdc.js" crossorigin="anonymous"></script>
     <title>Clustering</title>
 </head>
+
 <body>
-   <h1>{{ title }}</h1> 
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-5">
+                    <a href="{% url 'index' %}" class="btn btn-sm btn-outline-primary mt-2">Back Home</a>
+                    <h1 class="mt-2 mb-3">{{ title }}</h1>
+                    <form action="" method="get">
+                        <div class="row">
+                            <div class="col-md-10">
+                                <label for="kcluster">Jumlah k Cluster</label>
+                                <input type="text" class="form-control" name="kcluster" id="kcluster"
+                                    placeholder="masukan jumlah cluster" required>
+                                <button type="submit" class="btn btn-primary mt-3">Start</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-7">
+                    <div class="row mt-5">
+                        <h1>Data Customer</h1>
+                    </div>
+                    <div class="row mt-3">
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="row align-items-end">
+                                <div class="col-md-10">
+                                    <input type="file" name="myfile" class="form-control" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-outline-success mt-2 d-flex">Upload</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-6">
+                            <button class="btn btn-success">Add Manual Data</button>
+                        </div>
+                    </div>
+                    <table class="table mt-4">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Recency</th>
+                                <th>Frequency</th>
+                                <th>Monetary</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            {% if customer %}
+                            {% for data in customer  %}
+                            <tr>
+                                <td>{{ data.id_customer }}</td>
+                                <td>{{ data.name }}</td>
+                                <td>{{ data.email }}</td>
+                                <td>{{ data.recency }}</td>
+                                <td>{{ data.frequency }}</td>
+                                <td>{{ data.monetary }}</td>
+                                <td>
+                                    <a href="#" class="text-warning"><i class="fas fa-edit"></i></a>
+                                    <a href="#" class="text-danger"><i class="fas fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                            <tr class="text-center">
+                                <td colspan="7">Empty Data</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+        integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+        integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous">
+    </script>
 </body>
 </html>
