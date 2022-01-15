@@ -1,5 +1,6 @@
 from math import sqrt
 from random import sample
+from random import randint
 
 class Kmeans:
     def __init__(self, data, k, max_iter=30):
@@ -9,7 +10,7 @@ class Kmeans:
 
 
     def calculate(self):
-        centroids = self.random_init_centroid()
+        centroids = self.init_centroid()
         data_cluster = self.data.copy()
         iter = 0
         data_distance = [0]
@@ -46,8 +47,12 @@ class Kmeans:
                 centroids[d][i] = sum(temp_c)/len(temp_c)
         return centroids
 
-    def random_init_centroid(self):
-        index_init_centroid = sample(range(0, len(self.data[0])),self.k)
+    def init_centroid(self):
+        # Init centroid from random index
+        # index_init_centroid = sample(range(0, len(self.data[0])),self.k)
+        # Init centroid from kmeans++
+        index_init_centroid = self.kplusplus(self.data, self.k)
+
         centroids = []
         for j in range(0, len(self.data[0])):
             centroid = []
@@ -59,3 +64,21 @@ class Kmeans:
             if(len(centroid)>0):
                 centroids.append(centroid)
         return centroids
+
+    def kplusplus(self, data, k):
+        first_centroid = randint(0, len(data[0])-1)
+        index_centroid = []
+        index_centroid.append(first_centroid)
+        for r in range(k-1):
+            min_dis = []
+            for j in range(len(data[0])):
+                dis=[]
+                for c in index_centroid:
+                    temp_d=0
+                    for i in range(len(data)):
+                        temp_d += (data[i][c]-data[i][j])**2
+                    dis.append(temp_d)
+                min_dis.append(min(dis))
+            max_probabilitas = min_dis.index(max(min_dis))
+            index_centroid.append(max_probabilitas)
+        return index_centroid
