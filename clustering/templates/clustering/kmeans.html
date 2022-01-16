@@ -8,5 +8,10 @@
 </head>
 <body>
     <h1>{{ title }}</h1>
+    
+    {% if chart %}
+    <img src="data:image/png;base64, {{ chart|safe }}" alt="">
+    {% endif %}       
+    
 </body>
 </html>

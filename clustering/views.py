@@ -7,7 +7,9 @@ from datetime import datetime
 from clustering.kmeans import Kmeans
 from clustering.minmaxnorm import MinMaxNorm
 from clustering.silhouette_coefficient import SilhouetteCoefficient
+from clustering.topsis import Topsis
 from .utils import threedim_scatter_plot
+from copy import deepcopy
 
 # Create your views here.
 def index(request):
@@ -61,10 +63,60 @@ def kmeans(request):
     data_norm = MinMaxNorm(data).calculate()
 
     #kmeans
+    max_sc = -1
+    centroids = []
+    clusters = []
     for i in range(2,7):
         km = Kmeans(data = data_norm, k=i, max_iter=30).calculate()
         sc = SilhouetteCoefficient(km['clusters'], data_norm)
+        if sc.avg_score > max_sc:
+            max_sc = sc.avg_score
+            centroids = km['centroids']
+            clusters = km['clusters']
         print('Silhouette Coefficient jumlah k cluster '+str(i)+ ' : ' + str(sc.avg_score))
+
+    # topsis
+    label_topsis = ['r','f','m']
+    data={}
+    for j in range(len(centroids[0])):
+        temp=[]
+        for i in range(len(centroids)):
+            temp.append(centroids[i][j])
+        data[label_topsis[j]] = temp
+
+    weight = [0.097, 0.3446, 0.5583]
+    benefit = ['f', 'm']
+    cost = ['r']
+
+    c = Topsis(data, weight, benefit, cost)
+    top_pref = c.top_pref
+    low_pref = c.low_pref
+    print('Result :')
+    print(c.result)
+
+    # Rank Consistency
+    print('Rank Consistency :')
+    data_uji = {}
+    consitency = []
+    print(data)
+    for i in range(len(data[label_topsis[0]])):
+        data_uji = data_uji.clear()
+        data_uji = deepcopy(data)
+        for k, v in data.items():            
+            data_uji[k].append(v[i])
+            
+        c = Topsis(data_uji, weight, benefit, cost)        
+        print('Add alternatif ' + str(i))
+        print(c.result)
+
+        if top_pref == c.top_pref and low_pref == c.low_pref:
+            consitency.append(1)
+        else:
+            consitency.append(0)
+    print('Akurasi Rank Consistency : '+ str(sum(consitency)/len(consitency)*100)+'%')
+
+    chart = threedim_scatter_plot(data_param=data_norm, labels=clusters)
+    context['chart'] = chart
 
     return render(request,'clustering/kmeans.html', context)
 

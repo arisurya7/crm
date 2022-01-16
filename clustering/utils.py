@@ -25,9 +25,25 @@ def get_plot(x, y):
     graph = get_graph()
     return graph
 
-def threedim_scatter_plot(x,y,z):
-    fig = plt.figure()
+def threedim_scatter_plot(x=[],y=[],z=[],data_param=[],labels=[]):
+    colors= ['red', 'green', 'blue', 'yellow', 'orange', 'black']
+    plt.switch_backend('AGG')
+    plt.figure(figsize=(10,5))
     ax = plt.axes(projection='3d')
-    ax.scatter(x,y,z, color='red')
+    if len(x)>0 and len(y)>0 and len(z)>0:
+        ax.scatter(x,y,z, color='red')
+    else:
+        data=[]
+        for i in range(max(labels)+1):
+            cluster=[[],[],[]]
+            for j in range(len(data_param[0])):
+                if i == labels[j]:
+                    for k in range(len(data_param)):
+                        cluster[k].append(data_param[k][j])  
+            data.append(cluster)
+        print(data)
+        for i,cluster in enumerate(data):
+            ax.scatter(cluster[0],cluster[1], cluster[2], color=colors[i])
+
     graph = get_graph()
     return graph
