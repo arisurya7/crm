@@ -8,7 +8,7 @@ from clustering.kmeans import Kmeans
 from clustering.minmaxnorm import MinMaxNorm
 from clustering.silhouette_coefficient import SilhouetteCoefficient
 from clustering.topsis import Topsis
-from .utils import threedim_scatter_plot
+from .utils import silhouette_bar, threedim_scatter_plot
 from copy import deepcopy
 
 # Create your views here.
@@ -66,11 +66,13 @@ def kmeans(request):
     max_sc = -1
     centroids = []
     clusters = []
+    score_si = []
     for i in range(2,7):
         km = Kmeans(data = data_norm, k=i, max_iter=30).calculate()
         sc = SilhouetteCoefficient(km['clusters'], data_norm)
         if sc.avg_score > max_sc:
             max_sc = sc.avg_score
+            score_si = sc.score_si
             centroids = km['centroids']
             clusters = km['clusters']
         print('Silhouette Coefficient jumlah k cluster '+str(i)+ ' : ' + str(sc.avg_score))
@@ -117,6 +119,7 @@ def kmeans(request):
 
     chart = threedim_scatter_plot(data_param=data_norm, labels=clusters)
     context['chart'] = chart
+    context['si_chart'] = silhouette_bar(score_si=score_si, labels=clusters)
 
     return render(request,'clustering/kmeans.html', context)
 

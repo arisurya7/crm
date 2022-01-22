@@ -15,7 +15,7 @@ class Kmeans:
         iter = 0
         data_distance = [0]
         data_distance_new = [1]
-        while data_distance[-1]!=data_distance_new[-1] or iter > self.max_iter:
+        while data_distance[-1]!=data_distance_new[-1] and iter < self.max_iter:
             data_distance = self.calculate_distance(data_cluster, centroids)
             centroids = self.update_centroid(centroids, data_cluster, data_distance)
             data_distance_new = self.calculate_distance(data_cluster, centroids)

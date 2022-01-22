@@ -11,7 +11,11 @@
     
     {% if chart %}
     <img src="data:image/png;base64, {{ chart|safe }}" alt="">
-    {% endif %}       
+    {% endif %} 
+    
+    {% if si_chart %}
+    <img src="data:image/png;base64, {{ si_chart|safe }}" alt="" style="width: 50%;">
+    {% endif %}   
     
 </body>
 </html>
