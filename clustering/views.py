@@ -1,3 +1,4 @@
+from turtle import st
 from django.shortcuts import render
 from .models import Customer
 from .resources import CustomerResources
@@ -8,6 +9,7 @@ from clustering.kmeans import Kmeans
 from clustering.minmaxnorm import MinMaxNorm
 from clustering.silhouette_coefficient import SilhouetteCoefficient
 from clustering.topsis import Topsis
+from clustering.ahp import AhpWeight
 from .utils import silhouette_bar, threedim_scatter_plot
 from copy import deepcopy
 
@@ -133,6 +135,29 @@ def visualization(request):
         'chart' :chart
     }
     return render(request,'clustering/visualization.html',context)
+
+def ahp(request):
+    weight = {'r':0.097, 'f':0.3446, 'm':0.5583}
+    data_input = {}
+    if request.POST:
+        data_input[request.POST.get('input1')] = int(request.POST.get('score1'))
+        data_input[request.POST.get('input2')] = int(request.POST.get('score2'))
+        data_input[request.POST.get('input3')] = int(request.POST.get('score3'))
+
+    criteria = ['r','f','m']
+
+    if(len(data_input)>0):
+        ahp = AhpWeight(data_input, criteria)
+        if(ahp.consistency_ratio < 0.1):
+            weight = ahp.final_weight
+        else:
+            messages.info(request, 'Please re-submit, because consintency ration more than 0.1')
+
+    context = {
+        'title' : 'AHP',
+        'weight':weight
+    }
+    return render(request, 'clustering/ahp.html', context)
 
 def recency(last_active_date, analysis_date):
     lastdate = datetime.fromisoformat(last_active_date).strftime("%Y-%m-%d")
