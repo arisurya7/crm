@@ -1,0 +1,446 @@
+{% extends 'clustering/base.html' %}
+
+{% block content %}
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">{{ title }}</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active">{{ title }}</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <!-- Weight RFM -->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card" style="width: 30rem;">
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title">Skoring RFM</h5>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <h6 class="text-muted">Optional</h6>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <form action="{% url 'clustering:ahp' %}" class="" method="post">
+                    {% csrf_token %}
+                    <div class="row mb-2">
+                      <div class="col-md-7">
+                        <div class="form-group">
+                          <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="rf">Recency</label>
+                            <input class="form-check-input" type="radio" name="input1" id="rf" value="01" required>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="input1" id="fr" value="10" required>
+                            <label class="form-check-label" for="fr">Frequency</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-5">
+                        <div class="form-group">
+                          <select class="form-select" aria-label="Default select example" name="score1" required>
+                            <option value="" selected>Pilih Skor</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+    
+                    <div class="row mb-2">
+                      <div class="col-md-7">
+                        <div class="form-group">
+                          <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="rm">Recency</label>
+                            <input class="form-check-input" type="radio" name="input2" value="02" id="rm" required>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="input2" value="20" id="mr" required>
+                            <label class="form-check-label" for="mr">Monetary</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-5">
+                        <div class="form-group">
+                          <select class="form-select" aria-label="Default select example" name="score2" required>
+                            <option value="" selected>Pilih Skor</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+    
+                    <div class="row mb-2">
+                      <div class="col-md-7">
+                        <div class="form-group">
+                          <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="mf">Monetary</label>
+                            <input class="form-check-input" type="radio" name="input3" value="21" id="mf" required>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="input3" value="12" id="fm" required>
+                            <label class="form-check-label" for="fm">Frequency</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-5">
+                        <div class="form-group">
+                          <select class="form-select" aria-label="Default select example" name="score3" required>
+                            <option value="" selected>Pilih Skor</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+    
+                    <div class="row mt-1">
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="card" style="width: 20rem;">
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title">Weight RFM</h5>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <h6 class="mb-2 text-muted">Default</h6>
+                </div>
+              </div>
+              <div>
+                <div class="form-group mb-2">
+                  <label for="drecency">Recency</label>
+                  <input type="text" class="form-control" name="drecency" id="drecency" value="{{ weight.r }}" disabled>
+                </div>
+                <div class="form-group mb-2">
+                  <label for="dfrequency">Frequency</label>
+                  <input type="text" class="form-control" name="dfrequency" id="dfrequency" value="{{ weight.f }}"
+                    disabled>
+                </div>
+                <div class="form-group mb-2">
+                  <label for="dmonetary">Monetary</label>
+                  <input type="text" class="form-control" name="dmonetary" id="dmonetary" value="{{ weight.m }}"
+                    disabled>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Weight LRFM -->
+      <div class="row mt-5 mb-5">
+        <div class="col-md-6">
+          <div class="card" style="width: 30rem;">
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title">Skoring LRFM</h5>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <h6 class="text-muted">Optional</h6>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <form action="{% url 'clustering:ahp' %}" class="" method="post">
+                    {% csrf_token %}
+
+                    <div class="row mb-2">
+                      <div class="col-md-7">
+                        <div class="form-group">
+                          <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="lr">Length</label>
+                            <input class="form-check-input" type="radio" name="input1" id="lr" value="01" required>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="input1" id="rf" value="10" required>
+                            <label class="form-check-label" for="rf">Recency</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-5">
+                        <div class="form-group">
+                          <select class="form-select" aria-label="Default select example" name="score1" required>
+                            <option value="" selected>Pilih Skor</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row mb-2">
+                      <div class="col-md-7">
+                        <div class="form-group">
+                          <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="lm">Length</label>
+                            <input class="form-check-input" type="radio" name="input2" id="lf" value="01" required>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="input2" id="fl" value="10" required>
+                            <label class="form-check-label" for="ml">Frequency</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-5">
+                        <div class="form-group">
+                          <select class="form-select" aria-label="Default select example" name="score1" required>
+                            <option value="" selected>Pilih Skor</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row mb-2">
+                      <div class="col-md-7">
+                        <div class="form-group">
+                          <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="lm">Length</label>
+                            <input class="form-check-input" type="radio" name="input3" id="lm" value="01" required>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="input3" id="ml" value="10" required>
+                            <label class="form-check-label" for="ml">Monetary</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-5">
+                        <div class="form-group">
+                          <select class="form-select" aria-label="Default select example" name="score1" required>
+                            <option value="" selected>Pilih Skor</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+    
+                    <div class="row mb-2">
+                      <div class="col-md-7">
+                        <div class="form-group">
+                          <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="rf">Recency</label>
+                            <input class="form-check-input" type="radio" name="input4" id="rf" value="01" required>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="input4" id="fr" value="10" required>
+                            <label class="form-check-label" for="fr">Frequency</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-5">
+                        <div class="form-group">
+                          <select class="form-select" aria-label="Default select example" name="score1" required>
+                            <option value="" selected>Pilih Skor</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+    
+                    <div class="row mb-2">
+                      <div class="col-md-7">
+                        <div class="form-group">
+                          <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="rm">Recency</label>
+                            <input class="form-check-input" type="radio" name="input5" value="02" id="rm" required>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="input5" value="20" id="mr" required>
+                            <label class="form-check-label" for="mr">Monetary</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-5">
+                        <div class="form-group">
+                          <select class="form-select" aria-label="Default select example" name="score2" required>
+                            <option value="" selected>Pilih Skor</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+    
+                    <div class="row mb-2">
+                      <div class="col-md-7">
+                        <div class="form-group">
+                          <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="mf">Monetary</label>
+                            <input class="form-check-input" type="radio" name="input6" value="21" id="mf" required>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="input6" value="12" id="fm" required>
+                            <label class="form-check-label" for="fm">Frequency</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-5">
+                        <div class="form-group">
+                          <select class="form-select" aria-label="Default select example" name="score3" required>
+                            <option value="" selected>Pilih Skor</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+    
+                    <div class="row mt-1">
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="card" style="width: 20rem;">
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title">Weight LRFM</h5>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <h6 class="mb-2 text-muted">Default</h6>
+                </div>
+              </div>
+              <div>
+                <div class="form-group mb-2">
+                  <label for="dlength">Length</label>
+                  <input type="text" class="form-control" name="dlength" id="dlength" value="{{ weight_lrfm.l }}" disabled>
+                </div>
+                <div class="form-group mb-2">
+                  <label for="drecency">Recency</label>
+                  <input type="text" class="form-control" name="drecency" id="drecency" value="{{ weight_lrfm.r }}" disabled>
+                </div>
+                <div class="form-group mb-2">
+                  <label for="dfrequency">Frequency</label>
+                  <input type="text" class="form-control" name="dfrequency" id="dfrequency" value="{{ weight_lrfm.f }}"
+                    disabled>
+                </div>
+                <div class="form-group mb-2">
+                  <label for="dmonetary">Monetary</label>
+                  <input type="text" class="form-control" name="dmonetary" id="dmonetary" value="{{ weight_lrfm.m }}"
+                    disabled>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+
+{% endblock content %}
+
+
+{% block customscript %}
+<script>
+
+</script>
+{% endblock customscript %}

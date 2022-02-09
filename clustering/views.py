@@ -482,3 +482,38 @@ def getstrategy(request):
         'data':data
     }
     return JsonResponse(data)   
+
+def dashboard(request):
+    context = {
+        'title' : 'Dashboard',
+        'isDashboard':True
+    }
+    return render(request, 'clustering/dashboard/index.html', context)
+
+def managementdata(request):
+    context = {
+        'title' : 'Management Data',
+        'isManagementData' : True
+    }
+    return render(request, 'clustering/managementdata/index.html', context)
+
+def weightmodel(request):
+    context = {
+        'title' : 'Weight Model',
+        'isWeightModel':True
+    }
+    return render(request, 'clustering/weightmodel/index.html', context)
+
+def rfm(request):
+    context = {
+        'title' : 'Model RFM',
+        'isRfm' : True
+    }
+    return render(request, 'clustering/rfm/index.html', context)
+
+def lrfm(request):
+    context = {
+        'title' : 'Model LRFM',
+        'isLrfm' : True
+    }
+    return render(request, 'clustering/lrfm/index.html', context)

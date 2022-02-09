@@ -1,0 +1,102 @@
+{% extends 'clustering/base.html' %}
+
+{% block content %}
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">{{ title }}</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active">{{ title }}</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      
+      <div class="row mt-3 ml-1">
+        <div class="col-md-6">
+          <h1 class="mt-2 mb-3">Clustering</h1>
+          <form action="{% url 'clustering:index'%}" method="post">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-md-10">
+                <label for="k_start">Rentang Awal k Cluster</label>
+                <select class="form-select mb-2" aria-label="Default select example" name="k_start" id="k_start"
+                  required>
+                  <option value="" selected>Pilih k Cluster</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                </select>
+                <label for="k_end">Rentang Akhir k Cluster</label>
+                <select class="form-select" aria-label="Default select example" name="k_end" id="k_end" required>
+                  <option value="" selected>Pilih k Cluster</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                </select>
+                <button type="submit" class="btn btn-primary mt-3">Start</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <h1 class="mb-3">Data LRFM</h1>
+        <div class="col-md-10">
+
+          {% if data_lrfm %}
+          <table class="table table-light table-hover mt-2" id="table-norm">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Recency</th>
+                <th>Frequency</th>
+                <th>Monetary</th>
+                <th>Length</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for data in data_lrfm  %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ data.0 }}</td>
+                <td>{{ data.1 }}</td>
+                <td>{{ data.2}}</td>
+                <td>{{ data.3}}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </section>
+  <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+
+{% endblock content %}
+
+
+{% block customscript %}
+<script>
+
+</script>
+{% endblock customscript %}
