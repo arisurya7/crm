@@ -28,7 +28,7 @@ def get_plot(x, y):
 def threedim_scatter_plot(x=[],y=[],z=[],data_param=[],labels=[]):
     colors= ['red', 'green', 'blue', 'yellow', 'orange', 'black']
     plt.switch_backend('AGG')
-    plt.figure(figsize=(10,5))
+    plt.figure()
     ax = plt.axes(projection='3d')
     if len(x)>0 and len(y)>0 and len(z)>0:
         ax.scatter(x,y,z, color='red')
@@ -42,7 +42,12 @@ def threedim_scatter_plot(x=[],y=[],z=[],data_param=[],labels=[]):
                         cluster[k].append(data_param[k][j])  
             data.append(cluster)
         for i,cluster in enumerate(data):
-            ax.scatter(cluster[0],cluster[1], cluster[2], color=colors[i])
+            ax.scatter(cluster[0],cluster[1], cluster[2], color=colors[i], label='cluster '+str(i+1))
+            ax.set_xlabel('Recency')
+            ax.set_ylabel('Frequency')
+            ax.set_zlabel('Monetary')
+            ax.set_title('3D Scatter Plot Cluster')
+            ax.legend(title='Cluster Data')
 
     graph = get_graph()
     return graph
@@ -57,8 +62,8 @@ def silhouette_bar(score_si, labels):
         cluster_sc.sort()
         
         y_upper += len(cluster_sc)
-        ax.barh(range(y_lower,y_upper), cluster_sc,height =1, color=colors[i])
-        ax.text(-0.03,(y_lower+y_upper)/2,str(i))
+        ax.barh(range(y_lower,y_upper), cluster_sc,height =1, color=colors[i], label='cluster '+str(i+1))
+        ax.text(-0.03,(y_lower+y_upper)/2,str(i+1))
         y_lower += len(cluster_sc)
         
         # Get the average silhouette score 
@@ -68,7 +73,23 @@ def silhouette_bar(score_si, labels):
         ax.set_xlim([-0.1, 1])
         ax.set_xlabel('Silhouette coefficient values')
         ax.set_ylabel('Cluster labels')
+        ax.legend(title='Cluster Data')
         ax.set_title('Silhouette plot for the various clusters')
 
+    graph = get_graph()
+    return graph
+
+def silhouette_plot(x, y):
+    plt.switch_backend('AGG')
+    fig, ax = plt.subplots()
+    ax.set_ylim(-1,1)
+    ax.set_xlim(min(x)-0.5,max(x)+0.5)
+    plt.plot(x,y)
+    plt.title('Silhouette Coefficient K Cluster')
+    plt.ylabel('Score')
+    plt.xlabel('Number k cluster')
+    for i,j in zip(x,y):
+        ax.annotate(str(j),xy=(i,j))
+    
     graph = get_graph()
     return graph
