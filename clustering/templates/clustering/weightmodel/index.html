@@ -21,6 +21,52 @@
   <!-- Main content -->
   <section class="content">
     <div class="container-fluid">
+      <!-- Message Notif -->
+      <div class="row">
+        {% if messages %}
+        {% for message in messages %}
+        {% ifequal message|stringformat:"s" "success" %}
+        <div id="success-change-ahp" class="modal modal-wide fade">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title text-center">Sukses Update Weight</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p>Success update weight</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endifequal %}
+
+        {%ifnotequal message|stringformat:"s" "success" %}
+        <div id="failed-change-ahp" class="modal modal-wide fade">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title text-center">Gagal Update Weight RFM</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p>{{ message }}</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        {%endifnotequal %}
+        {% endfor %}
+
+        {% endif %}
+
+      </div>
       <!-- Weight RFM -->
       <div class="row">
         <div class="col-md-6">
@@ -38,10 +84,11 @@
               </div>
               <div class="row">
                 <div class="col">
-                  <form action="{% url 'clustering:ahp' %}" class="" method="post">
+                  <form action="{% url 'clustering:calculate-ahp' %}" class="" method="post">
                     {% csrf_token %}
                     <div class="row mb-2">
                       <div class="col-md-7">
+                        <input type="hidden" name="id_weight" value="{{ weight_rfm.id }}">
                         <div class="form-group">
                           <div class="form-check form-check-inline">
                             <label class="form-check-label" for="rf">Recency</label>
@@ -70,7 +117,7 @@
                         </div>
                       </div>
                     </div>
-    
+
                     <div class="row mb-2">
                       <div class="col-md-7">
                         <div class="form-group">
@@ -101,7 +148,7 @@
                         </div>
                       </div>
                     </div>
-    
+
                     <div class="row mb-2">
                       <div class="col-md-7">
                         <div class="form-group">
@@ -132,7 +179,7 @@
                         </div>
                       </div>
                     </div>
-    
+
                     <div class="row mt-1">
                       <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
@@ -159,17 +206,18 @@
               <div>
                 <div class="form-group mb-2">
                   <label for="drecency">Recency</label>
-                  <input type="text" class="form-control" name="drecency" id="drecency" value="{{ weight.r }}" disabled>
+                  <input type="text" class="form-control" name="drecency" id="drecency"
+                    value="{{ weight_rfm.w_recency }}" disabled>
                 </div>
                 <div class="form-group mb-2">
                   <label for="dfrequency">Frequency</label>
-                  <input type="text" class="form-control" name="dfrequency" id="dfrequency" value="{{ weight.f }}"
-                    disabled>
+                  <input type="text" class="form-control" name="dfrequency" id="dfrequency"
+                    value="{{ weight_rfm.w_frequency }}" disabled>
                 </div>
                 <div class="form-group mb-2">
                   <label for="dmonetary">Monetary</label>
-                  <input type="text" class="form-control" name="dmonetary" id="dmonetary" value="{{ weight.m }}"
-                    disabled>
+                  <input type="text" class="form-control" name="dmonetary" id="dmonetary"
+                    value="{{ weight_rfm.w_monetary }}" disabled>
                 </div>
               </div>
             </div>
@@ -194,19 +242,19 @@
               </div>
               <div class="row">
                 <div class="col">
-                  <form action="{% url 'clustering:ahp' %}" class="" method="post">
+                  <form action="{% url 'clustering:calculate-ahp' %}" class="" method="post">
                     {% csrf_token %}
-
                     <div class="row mb-2">
                       <div class="col-md-7">
+                        <input type="hidden" name="id_weight" value="{{ weight_lrfm.id }}">
                         <div class="form-group">
                           <div class="form-check form-check-inline">
                             <label class="form-check-label" for="lr">Length</label>
                             <input class="form-check-input" type="radio" name="input1" id="lr" value="01" required>
                           </div>
                           <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="input1" id="rf" value="10" required>
-                            <label class="form-check-label" for="rf">Recency</label>
+                            <input class="form-check-input" type="radio" name="input1" id="rl" value="10" required>
+                            <label class="form-check-label" for="rl">Recency</label>
                           </div>
                         </div>
                       </div>
@@ -232,105 +280,12 @@
                       <div class="col-md-7">
                         <div class="form-group">
                           <div class="form-check form-check-inline">
-                            <label class="form-check-label" for="lm">Length</label>
-                            <input class="form-check-input" type="radio" name="input2" id="lf" value="01" required>
+                            <label class="form-check-label" for="lf">Length</label>
+                            <input class="form-check-input" type="radio" name="input2" id="lf" value="02" required>
                           </div>
                           <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="input2" id="fl" value="10" required>
-                            <label class="form-check-label" for="ml">Frequency</label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-5">
-                        <div class="form-group">
-                          <select class="form-select" aria-label="Default select example" name="score1" required>
-                            <option value="" selected>Pilih Skor</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                            <option value="7">7</option>
-                            <option value="8">8</option>
-                            <option value="9">9</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="row mb-2">
-                      <div class="col-md-7">
-                        <div class="form-group">
-                          <div class="form-check form-check-inline">
-                            <label class="form-check-label" for="lm">Length</label>
-                            <input class="form-check-input" type="radio" name="input3" id="lm" value="01" required>
-                          </div>
-                          <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="input3" id="ml" value="10" required>
-                            <label class="form-check-label" for="ml">Monetary</label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-5">
-                        <div class="form-group">
-                          <select class="form-select" aria-label="Default select example" name="score1" required>
-                            <option value="" selected>Pilih Skor</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                            <option value="7">7</option>
-                            <option value="8">8</option>
-                            <option value="9">9</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-    
-                    <div class="row mb-2">
-                      <div class="col-md-7">
-                        <div class="form-group">
-                          <div class="form-check form-check-inline">
-                            <label class="form-check-label" for="rf">Recency</label>
-                            <input class="form-check-input" type="radio" name="input4" id="rf" value="01" required>
-                          </div>
-                          <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="input4" id="fr" value="10" required>
-                            <label class="form-check-label" for="fr">Frequency</label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-5">
-                        <div class="form-group">
-                          <select class="form-select" aria-label="Default select example" name="score1" required>
-                            <option value="" selected>Pilih Skor</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                            <option value="7">7</option>
-                            <option value="8">8</option>
-                            <option value="9">9</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-    
-                    <div class="row mb-2">
-                      <div class="col-md-7">
-                        <div class="form-group">
-                          <div class="form-check form-check-inline">
-                            <label class="form-check-label" for="rm">Recency</label>
-                            <input class="form-check-input" type="radio" name="input5" value="02" id="rm" required>
-                          </div>
-                          <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="input5" value="20" id="mr" required>
-                            <label class="form-check-label" for="mr">Monetary</label>
+                            <input class="form-check-input" type="radio" name="input2" id="fl" value="20" required>
+                            <label class="form-check-label" for="fl">Frequency</label>
                           </div>
                         </div>
                       </div>
@@ -351,17 +306,17 @@
                         </div>
                       </div>
                     </div>
-    
+
                     <div class="row mb-2">
                       <div class="col-md-7">
                         <div class="form-group">
                           <div class="form-check form-check-inline">
-                            <label class="form-check-label" for="mf">Monetary</label>
-                            <input class="form-check-input" type="radio" name="input6" value="21" id="mf" required>
+                            <label class="form-check-label" for="lm">Length</label>
+                            <input class="form-check-input" type="radio" name="input3" id="lm" value="03" required>
                           </div>
                           <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="input6" value="12" id="fm" required>
-                            <label class="form-check-label" for="fm">Frequency</label>
+                            <input class="form-check-input" type="radio" name="input3" id="ml" value="30" required>
+                            <label class="form-check-label" for="ml">Monetary</label>
                           </div>
                         </div>
                       </div>
@@ -382,7 +337,100 @@
                         </div>
                       </div>
                     </div>
-    
+
+                    <div class="row mb-2">
+                      <div class="col-md-7">
+                        <div class="form-group">
+                          <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="_rf">Recency</label>
+                            <input class="form-check-input" type="radio" name="input4" id="_rf" value="12" required>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="input4" id="_fr" value="21" required>
+                            <label class="form-check-label" for="_fr">Frequency</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-5">
+                        <div class="form-group">
+                          <select class="form-select" aria-label="Default select example" name="score4" required>
+                            <option value="" selected>Pilih Skor</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row mb-2">
+                      <div class="col-md-7">
+                        <div class="form-group">
+                          <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="_rm">Recency</label>
+                            <input class="form-check-input" type="radio" name="input5" value="13" id="_rm" required>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="input5" value="31" id="_mr" required>
+                            <label class="form-check-label" for="_mr">Monetary</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-5">
+                        <div class="form-group">
+                          <select class="form-select" aria-label="Default select example" name="score5" required>
+                            <option value="" selected>Pilih Skor</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row mb-2">
+                      <div class="col-md-7">
+                        <div class="form-group">
+                          <div class="form-check form-check-inline">
+                            <label class="form-check-label" for="_mf">Monetary</label>
+                            <input class="form-check-input" type="radio" name="input6" value="32" id="_mf" required>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="input6" value="23" id="_fm" required>
+                            <label class="form-check-label" for="_fm">Frequency</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-5">
+                        <div class="form-group">
+                          <select class="form-select" aria-label="Default select example" name="score6" required>
+                            <option value="" selected>Pilih Skor</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
                     <div class="row mt-1">
                       <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
@@ -409,21 +457,23 @@
               <div>
                 <div class="form-group mb-2">
                   <label for="dlength">Length</label>
-                  <input type="text" class="form-control" name="dlength" id="dlength" value="{{ weight_lrfm.l }}" disabled>
+                  <input type="text" class="form-control" name="dlength" id="dlength" value="{{ weight_lrfm.w_length }}"
+                    disabled>
                 </div>
                 <div class="form-group mb-2">
                   <label for="drecency">Recency</label>
-                  <input type="text" class="form-control" name="drecency" id="drecency" value="{{ weight_lrfm.r }}" disabled>
+                  <input type="text" class="form-control" name="drecency" id="drecency"
+                    value="{{ weight_lrfm.w_recency }}" disabled>
                 </div>
                 <div class="form-group mb-2">
                   <label for="dfrequency">Frequency</label>
-                  <input type="text" class="form-control" name="dfrequency" id="dfrequency" value="{{ weight_lrfm.f }}"
-                    disabled>
+                  <input type="text" class="form-control" name="dfrequency" id="dfrequency"
+                    value="{{ weight_lrfm.w_frequency }}" disabled>
                 </div>
                 <div class="form-group mb-2">
                   <label for="dmonetary">Monetary</label>
-                  <input type="text" class="form-control" name="dmonetary" id="dmonetary" value="{{ weight_lrfm.m }}"
-                    disabled>
+                  <input type="text" class="form-control" name="dmonetary" id="dmonetary"
+                    value="{{ weight_lrfm.w_monetary }}" disabled>
                 </div>
               </div>
             </div>
@@ -441,6 +491,11 @@
 
 {% block customscript %}
 <script>
-
+  $(document).ready(function () {
+    $('#success-change-ahp').modal('show');
+  });
+  $(document).ready(function () {
+    $('#failed-change-ahp').modal('show');
+  });
 </script>
 {% endblock customscript %}

@@ -2,6 +2,7 @@ import builtins
 import matplotlib.pyplot as plt
 import base64
 from io import BytesIO
+from sklearn.decomposition import PCA
 
 def get_graph():
     buffer = BytesIO()
@@ -33,19 +34,37 @@ def threedim_scatter_plot(x=[],y=[],z=[],data_param=[],labels=[]):
     if len(x)>0 and len(y)>0 and len(z)>0:
         ax.scatter(x,y,z, color='red')
     else:
-        data=[]
-        for i in range(max(labels)+1):
-            cluster=[[],[],[]]
-            for j in range(len(data_param[0])):
-                if i == labels[j]:
-                    for k in range(len(data_param)):
-                        cluster[k].append(data_param[k][j])  
-            data.append(cluster)
+        data=[] 
+        if len(data_param)==3:
+            for i in range(max(labels)+1):
+                cluster=[[],[],[]]
+                for j in range(len(data_param[0])):
+                    if i == labels[j]:
+                        for k in range(len(data_param)):
+                            cluster[k].append(data_param[k][j])  
+                data.append(cluster)
+        else:
+            data_tansform = list(map(list, zip(*data_param)))
+            data_pca = PCA(n_components=3).fit_transform(data_tansform)
+            for i in range(max(labels)+1):
+                cluster=[[],[],[]]
+                for j in range(len(data_pca)):
+                    if i == labels[j]:
+                        cluster[0].append(data_pca[j][0])
+                        cluster[1].append(data_pca[j][1])
+                        cluster[2].append(data_pca[j][2])
+                data.append(cluster)
+
         for i,cluster in enumerate(data):
             ax.scatter(cluster[0],cluster[1], cluster[2], color=colors[i], label='cluster '+str(i+1))
-            ax.set_xlabel('Recency')
-            ax.set_ylabel('Frequency')
-            ax.set_zlabel('Monetary')
+            if len(data_param)==3:
+                ax.set_xlabel('Recency')
+                ax.set_ylabel('Frequency')
+                ax.set_zlabel('Monetary')
+            else:
+                ax.set_xlabel('PC 1')
+                ax.set_ylabel('PC 2')
+                ax.set_zlabel('PC 3')
             ax.set_title('3D Scatter Plot Cluster')
             ax.legend(title='Cluster Data')
 

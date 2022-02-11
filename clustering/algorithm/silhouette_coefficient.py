@@ -25,7 +25,7 @@ class SilhouetteCoefficient:
                         temp_k += (self.data_norm[k][i]-self.data_norm[k][j])**2
                     dis_intra.append(sqrt(temp_k))
                 elif self.clusters[i] != self.clusters[j] and i != j:
-                    temp_k = 0
+                    temp_k = 0 
                     for k in range(len(self.data_norm)):
                         temp_k += (self.data_norm[k][i]-self.data_norm[k][j])**2
                     dict_inter[self.clusters[j]].append(sqrt(temp_k))
