@@ -4,3 +4,4 @@ from .managementdata import *
 from .weightmodel import *
 from .rfm import *
 from .lrfm import *
+from .getstrategy import *

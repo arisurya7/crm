@@ -1,44 +1,24 @@
 import string
 from turtle import st
 from django.shortcuts import redirect, render
-from clustering.models import Customer, Order, WeightLRFM, WeightRFM
+from clustering.models import Customer, Order, WeightLRFM
 from clustering.resources import CustomerResources, OrderResources
 from django.contrib import messages
-from django.http.response import JsonResponse
 from tablib import Dataset
-from datetime import datetime
 from datetime import date
 from clustering.algorithm.kmeans import Kmeans
 from clustering.algorithm.minmaxnorm import MinMaxNorm
 from clustering.algorithm.silhouette_coefficient import SilhouetteCoefficient
 from clustering.algorithm.topsis import Topsis
-from clustering.algorithm.ahp import AhpWeight
 from clustering.utils import silhouette_bar, threedim_scatter_plot, silhouette_plot
 from copy import deepcopy
+from .checkmodel import checkTypeModel, checkSilhouetteStructure
 
 def lrfm(request):
-    data_lrfm = False
-    k_start = 2
-    k_end = k_start
-    transpose_dataNorm = False
-    transpose_dataWeight =False
-    cluster_visualization = False
-    silhouette_visualization= False
-    silhouette_line_plot = False
-    centroids = False
-    clusters = False
-    matrixNorm = False
-    matrixIdeal = False
-    distanceAlter = False
-    preferensi = False
-    transpose_distanceAlter= False
-    matrix_rankConsistency = False
-    accuracy_rankConsistency = False
-    clusters_member = False
-    si_avg = False
-    si_member_cluster = False
-    centroids_type = False
-    max_sc = False
+    context = {
+        'title' : 'Model LRFM',
+        'isLrfm' : True,
+    }
     
     if request.POST.get('k_start') or request.POST.get('k_end'):
         if request.POST.get('k_start'):
@@ -57,10 +37,8 @@ def lrfm(request):
                     if order['date']<length_date:
                         length_date = order['date']
             
-
-            analysis_date = d['last_active']
-            data[0].append(lrfm_length(length_date, d['last_active']))
-            data[1].append(recency(analysis_date, current_date))
+            data[0].append(abs(length_date - d['last_active']).days)
+            data[1].append(abs(d['last_active'] - current_date).days)
             data[2].append(d['orders'])
             data[3].append(d['total_spend'])
         
@@ -134,10 +112,15 @@ def lrfm(request):
                 score_si = sc.score_si
                 centroids = km['centroids']
                 clusters = km['clusters']
+                best_scatter = scatter
+                best_silhouette_bar = silhoutte
+                best_count_cluster = member
+                best_count_silhouette = si_cluster
+
             print('Silhouette Coefficient jumlah k cluster '+str(i)+ ' : ' + str(sc.avg_score))
 
         # silhouette plot 
-        silhouette_line_plot = silhouette_plot(x=[i+2 for i in range(len(si_avg))], y=[round(data[0],3) for data in si_avg])
+        silhouette_line_plot = silhouette_plot(x=[k_start+i for i in range(len(si_avg))], y=[round(data[0],3) for data in si_avg])
 
         # topsis
         label_topsis = ['l','r','f','m']
@@ -205,140 +188,56 @@ def lrfm(request):
             type_m = checkTypeModel('M', data[3], data_weight[3])
             centroids_type.append(dict({'l':data[0],'r':data[1], 'f':data[2], 'm':data[3], 'type':type_l+type_r+type_f+type_m, 'strategy':type_f+type_m}))
 
-        print(centroids_type)
+        actual_cluster_member = []
+        actual_cluster = []
+        for i in range(max(clusters)+1):
+            actual_cluster_member.append([])
+            l_temp = []
+            r_temp = []
+            f_temp = []
+            m_temp = []
+            for j in range(len(clusters)):
+                row_data = {'name':'','email':'','l':0,'r':0, 'f':0, 'm':0, 'cluster':i+1}
+                if i == clusters[j]:
+                    row_data['name'] = data_customers[j]['name']
+                    row_data['email'] = data_customers[j]['email']
+                    row_data['l'] = data_lrfm[j][0]
+                    row_data['r'] = data_lrfm[j][1]
+                    row_data['f'] = data_lrfm[j][2]
+                    row_data['m'] = data_lrfm[j][3]
+                    actual_cluster_member[i].append(row_data)
+                    l_temp.append(data_lrfm[j][0])
+                    r_temp.append(data_lrfm[j][1])
+                    f_temp.append(data_lrfm[j][2])
+                    m_temp.append(data_lrfm[j][3])
+                    row_data = {'name':'','email':'','l':0,'r':0, 'f':0, 'm':0, 'cluster':i+1}
+            actual_cluster.append({'cluster': 'Cluster '+str(i+1), 'l':sum(l_temp)/len(l_temp), 'r':sum(r_temp)/len(r_temp), 'f':sum(f_temp)/len(f_temp), 'm':sum(m_temp)/len(m_temp)})
+        
+        context['k_start'] = k_start
+        context['data_lrfm'] = data_lrfm
+        context['data_norm'] = transpose_dataNorm
+        context['data_weight']=transpose_dataWeight
+        context['cluster_visualization'] = cluster_visualization
+        context['silhouette_visualization'] =  silhouette_visualization
+        context['silhouette_plot'] =  silhouette_line_plot
+        context['si_avg'] = si_avg
+        context['centroids'] = centroids
+        context['clusters'] = clusters
+        context['matrixNorm'] = matrixNorm
+        context['matrixIdeal']= matrixIdeal
+        context['distanceAlter']= transpose_distanceAlter
+        context['preferensi']= preferensi
+        context['matrix_rankConsistency']= matrix_rankConsistency
+        context['accuracy_rankConsistency'] = accuracy_rankConsistency
+        context['clusters_member'] = clusters_member
+        context['si_member_cluster'] = si_member_cluster
+        context['centroids_type']=centroids_type
+        context['max_sc']=[max_sc, checkSilhouetteStructure(max_sc)]
+        context['actual_cluster'] = actual_cluster
+        context['actual_cluster_member']= actual_cluster_member
+        context['best_scatter']= best_scatter
+        context['best_silhouette_bar']= best_silhouette_bar
+        context['best_count_cluster']= best_count_cluster
+        context['best_count_silhouette']= best_count_silhouette
     
-
-
-    context = {
-        'title' : 'Model LRFM',
-        'isLrfm' : True,
-        'data_lrfm' : data_lrfm,
-        'data_norm' : transpose_dataNorm,
-        'data_weight':transpose_dataWeight,
-        'cluster_visualization' : cluster_visualization,
-        'silhouette_visualization' :  silhouette_visualization,
-        'silhouette_plot' :  silhouette_line_plot,
-        'si_avg' : si_avg,
-        'centroids' : centroids,
-        'clusters' : clusters,
-        'matrixNorm' : matrixNorm,
-        'matrixIdeal': matrixIdeal,
-        'distanceAlter': transpose_distanceAlter,
-        'preferensi': preferensi,
-        'matrix_rankConsistency': matrix_rankConsistency,
-        'accuracy_rankConsistency' : accuracy_rankConsistency,
-        'clusters_member' : clusters_member,
-        'si_member_cluster' : si_member_cluster,
-        'centroids_type':centroids_type,
-        'max_sc': [max_sc, checkSilhouetteStructure(max_sc)]
-    }
     return render(request, 'clustering/lrfm/index.html', context)
-
-
-def recency(last_active_date, analysis_date):
-    #This is for string format date
-    # lastdate = datetime.fromisoformat(last_active_date).strftime("%Y-%m-%d")
-    # currentdate = datetime.fromisoformat(analysis_date).strftime("%Y-%m-%d")
-    # recency = abs(datetime.strptime(currentdate,"%Y-%m-%d") - datetime.strptime(lastdate,"%Y-%m-%d"))
-    #This is for datetime format
-    recency = abs(last_active_date-analysis_date)
-    return recency.days
-
-def lrfm_length(length_date, last_active):
-    length_lrfm = abs(last_active-length_date)
-    return length_lrfm.days
-
-def checkTypeModel(attribute, point_centroid, data_compare):
-    if attribute == 'L':
-        return 'L↑' if point_centroid > sum(data_compare)/len(data_compare) else 'L↓'
-    elif attribute == 'R':
-        return 'R↑' if point_centroid > sum(data_compare)/len(data_compare) else 'R↓'
-    elif attribute == 'F':
-        return 'F↑' if point_centroid > sum(data_compare)/len(data_compare) else 'F↓'
-    elif attribute == 'M':
-        return 'M↑' if point_centroid > sum(data_compare)/len(data_compare) else 'M↓'
-    else:
-        return 'Wrong'
-
-def checkStrategyRFM(type_rfm):
-    if type_rfm == 'F↑M↑':
-        return {
-            'name' : 'Enforced Strategy (F↑ M↑)',
-            'strategy' : [
-                'Menjaga komunikasi dengan pelanggan.',
-                'Menjaga interaktif jangka panjang.',
-                'Merancang program loyalitas pelanggan.',
-                'Mengerti kebutuhan dan kebiasaan pelanggan.'
-            ],
-
-            'saran' : [
-                'Mengirim informasi promosi melalui telepon, fax dan email.',
-                'Memberikan diskon pada acara tertentu.',
-                'Melakukan wawancara dengan pelanggan mengenai penawaran produk melalui telepon.'
-            ]
-        }
-    
-    elif type_rfm == 'F↑M↓':
-        return {
-            'name' : 'Offensive Strategy (F↑ M↓)',
-            'strategy' : [
-               'Mempertahankan loyalitas pelanggan dengan kegiatan up-selling dan cross-selling',
-               'Mempertahankan loyalitas dengan pelanggan.',
-               'Mengembangkan kegiatan promosi untuk meningkatkan frekuensi',
-               'Menarik minat pelanggan dengan produk atau layanan baru.'
-            ],
-
-            'saran' : [
-                'Mempromosikan produk baru atau produk pelengkap.',
-                'Meningkatkan pembelian pelanggan dengan menawarkan produk yang paling banyak dibeli.' 
-            ]
-        }
-    
-    elif type_rfm == 'F↓M↑':
-        return  {
-            'name' : 'Defensive Strategy (F↓ M↑)',
-            'strategy' : [
-                'Mengembangkan kegiatan promosi untuk meningkatkan frekuensi.',
-                'Mengirim informasi produk/layanan secara berkala.'               
-            ],
-
-            'saran' : [
-                'Merancang layanan purna jual.',
-                'Menawarkan produk up-selling dengan harga khusus.'
-            ]
-        }
-
-    elif type_rfm == 'F↓M↓':
-        return  {
-            'name' : 'Let-go Strategy (F↓ M↓)',
-            'strategy' : [
-               'Tidak ada keharusan perusahaan untuk memperhatikan segmen ini.',
-               'Memilih produk dengan fokus utama yang dibutuhkan pelanggan.',
-            ],
-
-            'saran' : [
-                'Memisahkan pelanggan baru dan pelanggan lama.',
-                'Melakukan komunikasi hanya dengan pelanggan baru.'
-            ]
-        }
-    else:
-        return'kosong'
-
-def checkSilhouetteStructure(si):
-    if si <=0.25:
-        return 'No Structure'
-    elif si > 0.25 and si <=0.5:
-        return 'Weak Structure'
-    elif si > 0.5 and si <=0.7:
-        return 'Medium Structure'
-    elif si > 0.7 and si <=1:
-        return 'Strong Structure'
-    else:
-        return ''
-
-def getstrategy(request):
-    data = checkStrategyRFM(request.GET.get('code_strategy'))
-    data = {
-        'data':data
-    }
-    return JsonResponse(data)

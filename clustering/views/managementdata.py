@@ -1,6 +1,7 @@
 import string
 from turtle import st
 from django.shortcuts import redirect, render
+from clustering.models import Customer, Order
 from clustering.resources import CustomerResources, OrderResources
 from django.contrib import messages
 from tablib import Dataset
