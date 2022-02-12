@@ -12,6 +12,7 @@ class Customer(models.Model):
     country = models.CharField(max_length=50, default=None, blank=True, null=True)
     city = models.CharField(max_length=50, default=None, blank=True, null=True)
     region = models.CharField(max_length=50, default=None, blank=True, null=True)
+    cluster = models.CharField(max_length=50, default=None, blank=True, null=True)
 
 class Order(models.Model):
     id_order = models.AutoField(primary_key=True)

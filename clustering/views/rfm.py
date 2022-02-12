@@ -199,6 +199,8 @@ def rfm(request):
                     m_temp.append(data_rfm[j][2])
                     row_data = {'name':'','email':'','r':0, 'f':0, 'm':0, 'cluster':i+1}
             actual_cluster.append({'cluster': 'Cluster '+str(i+1), 'r':sum(r_temp)/len(r_temp), 'f':sum(f_temp)/len(f_temp), 'm':sum(m_temp)/len(m_temp)})
+        
+        id_customers = [ data['id_customer'] for data in data_customers]
 
         context['k_start'] = k_start
         context['data_rfm'] = data_rfm
@@ -209,7 +211,7 @@ def rfm(request):
         context['silhouette_plot'] =  silhouette_line_plot
         context['si_avg'] = si_avg
         context['centroids'] = centroids
-        context['clusters'] = clusters
+        context['clusters'] = [list(pair) for pair in zip(id_customers, clusters)]
         context['matrixNorm'] = matrixNorm
         context['matrixIdeal']= matrixIdeal
         context['distanceAlter']= transpose_distanceAlter

@@ -9,6 +9,7 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name="dashboard"),
     #Management Data
     path('managementdata/', views.managementdata, name="managementdata"),
+    path('managementdata/update-cluster', views.update_cluster, name="update-cluster"),
     #Weight Model
     path('weightmodel/', views.weightmodel, name="weightmodel"),
     #RFM Model

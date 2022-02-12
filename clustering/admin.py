@@ -10,7 +10,7 @@ from .resources import *
 @admin.register(Customer)
 class CustomerAdmin(ImportExportModelAdmin):
     resource_class  =   CustomerResources
-    list_display = ('id_customer', 'name', 'email', 'last_active', 'orders', 'total_spend','aov','country', 'city', 'region')
+    list_display = ('id_customer', 'name', 'email', 'last_active', 'orders', 'total_spend','aov','country', 'city', 'region', 'cluster')
 
 @admin.register(Order)
 class OrderAdmin(ImportExportModelAdmin):

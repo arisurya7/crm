@@ -1,6 +1,7 @@
 import string
 from turtle import st
 from django.shortcuts import redirect, render
+from django.http.response import JsonResponse
 from clustering.models import Customer, Order
 from clustering.resources import CustomerResources, OrderResources
 from django.contrib import messages
@@ -78,3 +79,11 @@ def managementdata(request):
         'orders':orders,
     }
     return render(request, 'clustering/managementdata/index.html', context)
+
+def update_cluster(request):
+    if request.POST.get('clusters[]'):
+        list_clusters = request.POST.getlist('clusters[]')
+        for data in list_clusters:
+            data = list(data.split(","))
+            Customer.objects.filter(id_customer = int(data[0])).update(cluster = (int(data[1])+1))
+        return JsonResponse({'status':'success'})
