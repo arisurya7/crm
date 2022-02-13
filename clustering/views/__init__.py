@@ -5,3 +5,4 @@ from .weightmodel import *
 from .rfm import *
 from .lrfm import *
 from .getstrategy import *
+from .logout import *

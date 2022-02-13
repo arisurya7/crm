@@ -112,3 +112,24 @@ def silhouette_plot(x, y):
     
     graph = get_graph()
     return graph
+
+def sales_plot(x, y, kind):
+    plt.switch_backend('AGG')
+    fig, ax = plt.subplots()
+    # ax.set_ylim(-1,1)
+    # ax.set_xlim(min(x)-0.5,max(x)+0.5)
+    plt.plot(x,y)
+    if(kind == 'income'):
+        ax.set_ylim(min(y)-5000000,max(y)+5000000)
+        plt.title('Income every year')
+        plt.ylabel('Money (Rp)')
+    if(kind == 'order'):
+        ax.set_ylim(min(y)-300,max(y)+300)
+        plt.title('Order every year')
+        plt.ylabel('Count order')
+    plt.xlabel('Years')
+    for i,j in zip(x,y):
+        ax.annotate(str(j),xy=(i,j))
+    
+    graph = get_graph()
+    return graph

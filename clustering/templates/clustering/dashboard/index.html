@@ -23,22 +23,22 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-4">
-            <div class="small-box bg-light card-primary card-outline">
-              <div class="inner">
-                <p>Customers</p>
-                <h3>917</h3>
-              </div>
-              <div class="icon text-primary">
-                <i class="fas fa-database"></i>
-              </div>
+          <div class="small-box bg-light card-primary card-outline">
+            <div class="inner">
+              <p>Customers</p>
+              <h3>{{ customer_count }}</h3>
             </div>
+            <div class="icon text-primary">
+              <i class="fas fa-database"></i>
+            </div>
+          </div>
         </div>
 
         <div class="col-sm-4">
           <div class="small-box bg-light card-primary card-outline">
             <div class="inner">
               <p>Orders</p>
-              <h3>2000</h3>
+              <h3>{{ order_count }}</h3>
             </div>
             <div class="icon text-primary">
               <i class="fas fa-database"></i>
@@ -50,42 +50,40 @@
           <div class="small-box bg-light card-primary card-outline">
             <div class="inner">
               <p>Cluster Customer</p>
-              <h3>0</h3>
+              <h3>{{ cluster }}</h3>
             </div>
             <div class="icon text-primary">
               <i class="fas fa-database"></i>
             </div>
           </div>
         </div>
-    </div> 
-
-    <div class="card card-primary card-outline">
-      <div class="card-body">
-        <div class="row">
-          <div class="col-sm-12">
-            <div class="float-left">
-              <h4>Sales Chart</h4>
-            </div>
-            <div class="float-right">
-              <select name="filter_tahun" id="filter_tahun" class="form-control select2">
-                <option value="">All Year</option>
-                <option value="2020">2020</option>
-                <option value="2019">2019</option>
-                <option value="2018">2018</option>
-                <option value="2017">2017</option>
-                <option value="2016">2016</option>
-                <option value="2015">2015</option>
-              </select>
-            </div>
-           
-          </div>
-
-        </div>
-        
-        <img src="#" alt="">
-    
       </div>
-    </div>
+
+      <div class="card card-primary card-outline">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="float-left">
+                <h4>Sales Plot</h4>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              {% if income_plot %}
+              <img src="data:image/png;base64, {{ income_plot|safe }}" class="mt-2 mx-auto d-block" alt=""
+                style="width: 30rem;">
+              {% endif %}
+            </div>
+            <div class="col-md-6">
+              {% if order_plot %}
+              <img src="data:image/png;base64, {{ order_plot|safe }}" class="mt-2 mx-auto d-block" alt=""
+                style="width: 30rem;">
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
 
 
 
