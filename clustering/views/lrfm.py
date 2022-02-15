@@ -1,5 +1,4 @@
 import string
-from turtle import st
 from django.shortcuts import redirect, render
 from clustering.models import Customer, Order, WeightLRFM
 from clustering.resources import CustomerResources, OrderResources

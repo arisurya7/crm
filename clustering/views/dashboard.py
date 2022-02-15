@@ -1,4 +1,3 @@
-from tkinter.tix import MAX
 from django.shortcuts import redirect, render
 from clustering.models import Customer, Order
 from django.db.models import Max, Min, Sum

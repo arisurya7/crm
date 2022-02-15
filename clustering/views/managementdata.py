@@ -1,5 +1,4 @@
 import string
-from turtle import st
 from django.shortcuts import redirect, render
 from django.http.response import JsonResponse
 from clustering.models import Customer, Order
