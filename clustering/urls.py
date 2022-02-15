@@ -16,6 +16,12 @@ urlpatterns = [
     path('rfm/', views.rfm, name="rfm"),
     #LRFM Model
     path('lrfm/', views.lrfm, name="lrfm"),
+    #General RFM
+    path('general-rfm', views.general_rfm, name = "general-rfm"),
+    path('clear-general-rfm', views.clear_general_rfm, name = "clear-general-rfm"),
+    #General LRFM
+    path('general-lrfm', views.general_lrfm, name = "general-lrfm"),
+    path('clear-general-lrfm', views.clear_general_lrfm, name = "clear-general-lrfm"),
     #Logout
     path('logout/', views.logout, name="logout")
 ]
