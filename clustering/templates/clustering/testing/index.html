@@ -1,5 +1,6 @@
 {% extends 'clustering/base.html' %}
 {% load index %}
+{% load devide %}
 {% block content %}
 
 <div class="content-wrapper">
@@ -236,6 +237,54 @@
                   {% endfor %}
                 </tbody>
               </table>
+              {% endif %}
+
+              <!-- Validasi -->
+              <h3 class="mb-2 mt-2">Validasi</h3>
+              {% if validasi_rfm %}
+              <h5 class="mb-2 mt-2"> RFM</h5>
+              <table class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th>Peringkat</th>
+                    <th>Sistem</th>
+                    <th>Manual</th>
+                    <th>Validasi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for data in validasi_rfm.result %}
+                  <tr>
+                    <td>Cluster {{ forloop.counter }}</td>
+                    <td>{{ data.0 }}</td>
+                    <td>{{ data.1 }}</td>
+                    <td>{{ data.2 }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <h5 class="mb-2 mt-2"> LRFM</h5>
+              <table class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th>Peringkat</th>
+                    <th>Sistem</th>
+                    <th>Manual</th>
+                    <th>Validasi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for data in validasi_lrfm.result %}
+                  <tr>
+                    <td>Cluster {{ forloop.counter }}</td>
+                    <td>{{ data.0 }}</td>
+                    <td>{{ data.1 }}</td>
+                    <td>{{ data.2 }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <h3 class="mb-2 mt-4"> Accuracy : {{ validasi_rfm.accuracy|add:validasi_lrfm.accuracy|devide:2 }}</h3>
               {% endif %}
 
 

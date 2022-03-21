@@ -119,6 +119,11 @@ def testing(request):
             preferensiRfm = t_rfm.preferensi()
             print(preferensiRfm)
 
+            #validasi rfm
+            manual_rank_rfm = ['Cluster 2', 'Cluster 1']
+            validasi_rfm = validate_topsis(preferensiRfm, manual_rank_rfm)
+            print(validasi_rfm)
+
             #topsis lrfm
             alternative_label = ['Cluster '+str(i+1) for i in range(len(centroid_rfm))]
             label_topsis = ['l','r','f','m']
@@ -136,6 +141,11 @@ def testing(request):
             low_pref_lrfm = t_lrfm.low_pref
             preferensiLrfm = t_lrfm.preferensi()
             print(preferensiLrfm)
+
+            #validasi rfm
+            manual_rank_lrfm = ['Cluster 2', 'Cluster 1']
+            validasi_lrfm = validate_topsis(preferensiLrfm, manual_rank_lrfm)
+            print(validasi_lrfm)
 
             #rank consistency rfm
             data_uji = {}
@@ -197,6 +207,7 @@ def testing(request):
             context['preferensiRfm'] = preferensiRfm
             context['matrix_rankConsistencyRfm'] = matrix_rankConsistencyRfm
             context['accuracy_rankConsistencyRfm'] = accuracy_rankConsistencyRfm
+            context['validasi_rfm'] = validasi_rfm
 
             context['data_sc_lrfm'] = list(map(list, zip(*data_sc_lrfm)))
             context['graph_sc_lrfm'] = graph_sc_lrfm
@@ -204,8 +215,25 @@ def testing(request):
             context['preferensiLrfm'] = preferensiLrfm
             context['matrix_rankConsistencyLrfm'] = matrix_rankConsistencyLrfm
             context['accuracy_rankConsistencyLrfm'] = accuracy_rankConsistencyLrfm
+            context['validasi_lrfm'] = validasi_lrfm
             
 
         return render(request, 'clustering/testing/index.html', context)
     else:
         return redirect('login')
+
+
+def validate_topsis(preferensi, manual_rank):
+    pref_rank = np.array(preferensi)
+    pref_rank = pref_rank[pref_rank[:,-1].argsort()]
+    validasi = []
+    if(len(preferensi) == len(manual_rank)):
+        for i, rangking in enumerate(pref_rank):
+            if rangking[0] == manual_rank[i]:
+                validasi.append([rangking[0], manual_rank[i], 'Valid', 1])
+            else:
+                validasi.append([rangking[0], manual_rank[i], 'Tidak Valid', 0])
+        accuracy = np.array(validasi)[:,-1].astype(np.int).sum()/len(validasi)*100
+        return {'result':validasi, 'accuracy':accuracy}
+    else:
+        return {'result':[], 'accuracy':None}
