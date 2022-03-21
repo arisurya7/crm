@@ -16,6 +16,8 @@ urlpatterns = [
     path('rfm/', views.rfm, name="rfm"),
     #LRFM Model
     path('lrfm/', views.lrfm, name="lrfm"),
+    #Testing
+    path('testing/', views.testing, name="testing"),
     #General RFM
     path('general-rfm', views.general_rfm, name = "general-rfm"),
     path('clear-general-rfm', views.clear_general_rfm, name = "clear-general-rfm"),

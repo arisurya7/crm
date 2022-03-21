@@ -1,0 +1,345 @@
+{% extends 'clustering/base.html' %}
+{% load index %}
+{% block content %}
+
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">{{ title }}</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active">{{ title }}</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container">
+
+      <div class="row mt-3 ml-3">
+        <div class="col-md-6">
+          <h5 class="mt-2 mb-3">Testing</h5>
+          <form action="{% url 'clustering:testing'%}" method="post">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-md-10">
+                <label for="k_start">Rentang Awal k Cluster</label>
+                <select class="form-select mb-2" aria-label="Default select example" name="k_start" id="k_start"
+                  required>
+                  <option value="" selected>Pilih k Cluster</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                </select>
+                <label for="k_end">Rentang Akhir k Cluster</label>
+                <select class="form-select" aria-label="Default select example" name="k_end" id="k_end" required>
+                  <option value="" selected>Pilih k Cluster</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                </select>
+                <button type="submit" class="btn btn-primary mt-3">Start</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+
+      <div class="row mt-5 ml-3">
+        <h1 class="mb-3">Pengujian Silhouette Coefficient</h1>
+        <div class="col">
+          {% if data_sc_rfm %}
+          <div class="card" style="border-radius: 1rem;">
+            <div class="card-body">
+              <div class="row">
+                <h3 class="mt-2">Silhouette Coefficient RFM</h3>
+                {% if graph_sc_rfm %}
+                <img src="data:image/png;base64, {{ graph_sc_rfm|safe }}" class="mt-2 mx-auto d-block" alt=""
+                  style="width: 55rem;">
+                {% endif %}
+                <table class="table table-hover table-bordered mt-2" id="table-sc-rfm">
+                  <thead>
+                    <tr>
+                      <th>Jumlah Cluster</th>
+                      <th>Data Bobot 1</th>
+                      <th>Data Bobot 2</th>
+                      <th>Data Bobot 3</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for data in data_sc_rfm  %}
+                    <tr>
+                      <td>{{ forloop.counter0|add:k_start }}</td>
+                      <td>{{ data.0}}</td>
+                      <td>{{ data.1}}</td>
+                      <td>{{ data.2}}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              <div class="row">
+                <h3 class="mt-2">Silhouette Coefficient LRFM</h3>
+                {% if graph_sc_lrfm %}
+                <img src="data:image/png;base64, {{ graph_sc_lrfm|safe }}" class="mt-2 mx-auto d-block" alt=""
+                  style="width: 55rem;">
+                {% endif %}
+
+                {% if data_sc_lrfm %}
+                <table class="table table-hover table-bordered mt-2" id="table-sc-lrfm">
+                  <thead>
+                    <tr>
+                      <th>Jumlah Cluster</th>
+                      <th>Data Bobot 1</th>
+                      <th>Data Bobot 2</th>
+                      <th>Data Bobot 3</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for data in data_sc_lrfm  %}
+                    <tr>
+                      <td>{{ forloop.counter0|add:k_start }}</td>
+                      <td>{{ data.0}}</td>
+                      <td>{{ data.1}}</td>
+                      <td>{{ data.2}}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+                {% endif %}
+              </div>
+
+              <div class="row d-block">
+                <h3 class="mt-2">Centroid Cluster</h3>
+                <br>
+                {% if centroid_rfm %}
+                <h5 class="mt-2">Model RFM</h5>
+                <table class="table table-hover table-bordered mt-2">
+                  <thead>
+                    <tr>
+                      <th>Cluster</th>
+                      <th>Rencency</th>
+                      <th>Frequency</th>
+                      <th>Monatery</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for data in centroid_rfm  %}
+                    <tr>
+                      <td>Cluster {{ forloop.counter }}</td>
+                      <td>{{ data.0}}</td>
+                      <td>{{ data.1}}</td>
+                      <td>{{ data.2}}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+                {% endif %}
+
+                {% if centroid_lrfm %}
+                <h5 class="mt-2">Model LRFM</h5>
+                <table class="table table-hover table-bordered mt-2">
+                  <thead>
+                    <tr>
+                      <th>Cluster</th>
+                      <th>Length</th>
+                      <th>Rencency</th>
+                      <th>Frequency</th>
+                      <th>Monatery</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for data in centroid_lrfm  %}
+                    <tr>
+                      <td>Cluster {{ forloop.counter }}</td>
+                      <td>{{ data.0}}</td>
+                      <td>{{ data.1}}</td>
+                      <td>{{ data.2}}</td>
+                      <td>{{ data.3}}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+                {% endif %}
+
+              </div>
+
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="row mt-5 ml-3">
+        <h1 class="mb-3">Pengujian Validasi Perhitungan TOPSIS</h1>
+        <div class="col">
+
+          {% if preferensiRfm %}
+          <div class="card" style="border-radius: 1rem;">
+            <div class="card-body">
+
+              <!-- RFM -->
+              <h3 class="mb-2 mt-2">Model RFM</h3>
+              {% if preferensiRfm %}
+              <h5 class="mb-2 mt-2"> Nilai Preferensi</h5>
+              <table class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th>Alternatif</th>
+                    <th>Preferensi</th>
+                    <th>Peringkat</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for data in preferensiRfm  %}
+                  <tr>
+                    <td>Cluster {{ forloop.counter }}</td>
+                    <td>{{ data.1 }}</td>
+                    <td>{{ data.2 }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              {% endif %}
+
+              <!-- LRFM -->
+              <h3 class="mb-2 mt-2">Model LRFM</h3>
+              {% if preferensiLrfm %}
+              <h5 class="mb-2 mt-2"> Nilai Preferensi</h5>
+              <table class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th>Alternatif</th>
+                    <th>Preferensi</th>
+                    <th>Peringkat</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for data in preferensiLrfm  %}
+                  <tr>
+                    <td>Cluster {{ forloop.counter }}</td>
+                    <td>{{ data.1 }}</td>
+                    <td>{{ data.2 }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              {% endif %}
+
+
+            </div>
+          </div>
+          {% endif %}
+
+        </div>
+      </div>
+
+      <div class="row mt-5 ml-3">
+        <h1 class="mb-3">Pengujian Rank Consistency</h1>
+        <div class="col-md-12">
+
+          {% if matrix_rankConsistencyRfm %}
+          <div class="card" style="border-radius: 1rem;">
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h2 class="mt-3 mb-2">Uji Rank Consistency RFM</h2>
+                  {% for matrix in matrix_rankConsistencyRfm %}
+                  <h5 class="mb-2 mt-2"> Penambahan Alternatif Cluster {{ forloop.counter }}</h5>
+                  <table class="table table-bordered table-hover">
+                    <thead>
+                      <tr>
+                        <th>Alternatif</th>
+                        <th>Preferensi</th>
+                        <th>Peringkat</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for data in matrix  %}
+                      <tr>
+                        <td>{{ data.0 }}</td>
+                        <td>{{ data.1 }}</td>
+                        <td>{{ data.2 }}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+
+                  </table>
+                  {% endfor %}
+
+                  {% if accuracy_rankConsistencyRfm %}
+                  <h4 class="mt-2">Akurasi : {{ accuracy_rankConsistencyRfm }} %</h4>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col">
+                  <h2 class="mt-3 mb-2">Uji Rank Consistency LRFM</h2>
+                  {% for matrix in matrix_rankConsistencyLrfm %}
+                  <h5 class="mb-2 mt-2"> Penambahan Alternatif Cluster {{ forloop.counter }}</h5>
+                  <table class="table table-bordered table-hover">
+                    <thead>
+                      <tr>
+                        <th>Alternatif</th>
+                        <th>Preferensi</th>
+                        <th>Peringkat</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for data in matrix  %}
+                      <tr>
+                        <td>{{ data.0 }}</td>
+                        <td>{{ data.1 }}</td>
+                        <td>{{ data.2 }}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+
+                  </table>
+                  {% endfor %}
+
+                  {% if accuracy_rankConsistencyLrfm %}
+                  <h4 class="mt-2">Akurasi : {{ accuracy_rankConsistencyLrfm }} %</h4>
+                  {% endif %}
+                </div>
+              </div>
+
+            </div>
+          </div>
+          {% endif %}
+
+        </div>
+      </div>
+
+
+    </div>
+  </section>
+  <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+
+{% endblock content %}
+
+{% block customscript %}
+<script>
+  $('#table-sc-rfm').DataTable({
+    lengthMenu: [5, 10, 20, 50, 100, 200, 500]
+  });
+  $('#table-sc-lrfm').DataTable({
+    lengthMenu: [5, 10, 20, 50, 100, 200, 500]
+  });
+</script>
+{% endblock customscript %}

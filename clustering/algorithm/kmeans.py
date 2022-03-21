@@ -1,13 +1,14 @@
 from math import sqrt
 from random import sample
 from random import randint
+import numpy as np
 
 class Kmeans:
-    def __init__(self, data, k, max_iter=30):
+    def __init__(self, data, k, centroid_init='kplusplus', max_iter=30):
         self.k = k
+        self.centroid_init = centroid_init
         self.data = data
         self.max_iter = max_iter
-
 
     def calculate(self):
         centroids = self.init_centroid()
@@ -22,19 +23,13 @@ class Kmeans:
             iter=iter+1
         return {'data_distance':data_distance_new, 'clusters':data_distance_new[-1], 'centroids':centroids}
 
-
     def calculate_distance(self, data_cluster, centroids):
-        data_distance = [[] for i in range(len(centroids)+1)]
-        for j in range(len(data_cluster[0])):
-            temp_c =[]
-            for d, centroid in enumerate(centroids):
-                temp_d = 0
-                for i,c in enumerate(centroid):
-                    temp_d += (data_cluster[i][j]-c)**2
-                dis = sqrt(temp_d)
-                temp_c.append(dis)
-                data_distance[d].append(dis)
-            data_distance[-1].append(temp_c.index(min(temp_c)))
+        data_distance = []
+        for centroid in np.array(centroids):
+            dis = np.sqrt(((np.array(data_cluster).transpose() - centroid)**2).sum(axis=1))
+            data_distance.append(list(dis))
+        labels = [ list(data).index(data.min(axis=0)) for data in np.array(data_distance).transpose()]
+        data_distance.append(labels)
         return data_distance
     
     def update_centroid(self, centroids, data_cluster, distance):
@@ -48,37 +43,22 @@ class Kmeans:
         return centroids
 
     def init_centroid(self):
-        # Init centroid from random index
-        # index_init_centroid = sample(range(0, len(self.data[0])),self.k)
-        # Init centroid from kmeans++
-        index_init_centroid = self.kplusplus(self.data, self.k)
-
-        centroids = []
-        for j in range(0, len(self.data[0])):
-            centroid = []
-            for i in range(0, len(self.data)):
-                if j in index_init_centroid:
-                    centroid.append(self.data[i][j])
-                else:
-                    break
-            if(len(centroid)>0):
-                centroids.append(centroid)
-        return centroids
+        if(self.centroid_init == 'random'):
+            index_init_centroid = sample(range(0, len(self.data[0])),self.k)
+        elif (self.centroid_init == 'kplusplus'):
+            index_init_centroid = self.kplusplus(self.data, self.k)        
+        data_cluster = list(map(list, zip(*self.data))) 
+        return [data_cluster[i] for i in index_init_centroid]
 
     def kplusplus(self, data, k):
-        first_centroid = randint(0, len(data[0])-1)
         index_centroid = []
-        index_centroid.append(first_centroid)
+        index_centroid.append(randint(0, len(data[0])-1))
         for r in range(k-1):
-            min_dis = []
-            for j in range(len(data[0])):
-                dis=[]
-                for c in index_centroid:
-                    temp_d=0
-                    for i in range(len(data)):
-                        temp_d += (data[i][c]-data[i][j])**2
-                    dis.append(temp_d)
-                min_dis.append(min(dis))
-            max_probabilitas = min_dis.index(max(min_dis))
-            index_centroid.append(max_probabilitas)
+            dis = []
+            for c in index_centroid:
+                rs = list(((np.array(data).transpose() - np.array(data).transpose()[c])**2).sum(axis=1))
+                dis.append(rs)
+            min_dis = list(np.array(dis).min(axis=0))
+            max_prob = min_dis.index(max(min_dis))
+            index_centroid.append(max_prob)
         return index_centroid

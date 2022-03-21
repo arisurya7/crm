@@ -141,14 +141,14 @@ def lrfm(request):
             c = Topsis(data=data, benefit=benefit, cost=cost,alternative=alternative_label)
             top_pref = c.top_pref
             low_pref = c.low_pref
-            matrixNorm = list(map(list, zip(*[data for data in c.matrixNorm.values()])))
-            matrixIdeal = c.matrixIdeal
-            distanceAlter = dict(c.distanceAlter)
-            preferensi = c.result
+            matrixNorm = list(map(list, zip(*[data for data in c.matrixNormalization().values()])))
+            matrixIdeal = c.matrixIdealSolution()
+            distanceAlter = dict(c.distanceAlternative())
+            preferensi = c.preferensi()
 
 
             print('Result :')
-            print(c.result)
+            print(c.preferensi())
 
             # Rank Consistency
             print('Rank Consistency :')
@@ -169,8 +169,8 @@ def lrfm(request):
                 c = Topsis(data=data_uji, benefit=benefit, cost=cost, alternative=alternative_test)        
                 print('Add alternatif ' + str(i))
                 print(data_uji)
-                print(c.result)
-                matrix_rankConsistency.append(c.result)
+                print(c.preferensi())
+                matrix_rankConsistency.append(c.preferensi())
 
                 if top_pref == c.top_pref and low_pref == c.low_pref:
                     consitency.append(1)

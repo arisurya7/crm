@@ -133,3 +133,42 @@ def sales_plot(x, y, kind):
     
     graph = get_graph()
     return graph
+
+def testing_sc_bar(x, data, title):
+    plt.switch_backend('AGG')
+    fig, ax = plt.subplots()
+    fig.set_figwidth(12)
+
+    x_base = x
+    x1 = [x-0.2*2 for x in x_base]
+    x2 = [x-0.2 for x in x_base]
+    x3 = [x for x in x_base]
+    x4 = [x+0.2 for x in x_base]
+
+    y1 = [round(sc,3) for sc in data[0]]
+    y2 = [round(sc,3) for sc in data[1]]
+    y3 = [round(sc,3) for sc in data[2]]
+    y4 = [round(sc,3) for sc in data[3]]
+
+    width = 0.2
+
+    rects1 = ax.bar(x1, y1, width, label='Bobot 1')
+    rects2 = ax.bar(x2, y2, width, label='Bobot 2')
+    rects3 = ax.bar(x3, y3, width, label='Bobot 3')
+    rects4 = ax.bar(x4, y4, width, label='Tanpa Bobot')
+
+    ax.set_ylabel('Scores')
+    ax.set_xlabel('Jumlah k Cluster')
+    ax.set_title(title)
+    ax.set_xticks(x3)
+    ax.set_yticks([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
+    ax.legend()
+
+    ax.bar_label(rects1, padding=3)
+    ax.bar_label(rects2, padding=3)
+    ax.bar_label(rects3, padding=3)
+    ax.bar_label(rects4, padding=3)
+
+    graph = get_graph()
+    return graph
+

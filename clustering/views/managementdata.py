@@ -23,7 +23,9 @@ def managementdata(request):
             
             imported_data = dataset.load(new_customer.read(), format='xlsx')
             for data in imported_data:
-                if len(data[2])>10:
+                if(isinstance(data[2], datetime)):
+                    last_active = data[2]
+                elif len(data[2])>10:
                     last_active = data[2][:10]
                 else:
                     last_active = data[2]
@@ -55,21 +57,22 @@ def managementdata(request):
             
             imported_data = dataset.load(new_orders.read(), format='xlsx')
             for data in imported_data:
-                if(isinstance(data[2], datetime)):
-                    date = data[2]
+                if(isinstance(data[3], datetime)):
+                    date = data[3]
                 else:
-                    if len(data[2])>10:
-                        date = data[2][:10]
+                    if len(data[3])>10:
+                        date = data[3][:10]
                     else:
-                        date = data[2]
+                        date = data[3]
                         
                 value = Order(
                     data[0],
                     current_user['id_company'],
                     data[1],
+                    data[2],
                     date,
-                    data[3],
                     data[4],
+                    data[5],
                 )
 
                 value.save()

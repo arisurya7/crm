@@ -16,8 +16,9 @@ class Customer(models.Model):
     cluster = models.CharField(max_length=50, default=None, blank=True, null=True)
 
 class Order(models.Model):
-    id_order = models.AutoField(primary_key=True)
+    id_order = models.CharField(primary_key=True,max_length=100)
     id_company = models.IntegerField()
+    id_customer = models.IntegerField()
     name = models.CharField(max_length=50)
     date = models.DateField()
     status = models.CharField(max_length=50)
