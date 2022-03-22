@@ -27,7 +27,7 @@
       <div class="row mt-3 ml-3">
         <div class="col-md-6">
           <h5 class="mt-2 mb-3">Rekomendasi Cluster</h5>
-          <a href="#" class="btn btn-warning">Clear Rekomendasi Cluster</a>
+          <a href="{%url 'clustering:clear-rekomendasi'%}" class="btn btn-warning">Clear Rekomendasi Cluster</a>
         </div>
       </div>
 
@@ -43,14 +43,14 @@
                 <h3 class="mt-2">Scatter Plot Cluster</h3>
                 <div class="col-md-6">
                   {% if scatter_rfm %}
-                  <img src="data:image/png;base64, {{ scatter_rfm|safe }}"
-                  class="mt-2 mx-auto d-block" alt="" style="width: 27rem;">
+                  <img src="data:image/png;base64, {{ scatter_rfm|safe }}" class="mt-2 mx-auto d-block" alt=""
+                    style="width: 27rem;">
                   {% endif %}
                 </div>
                 <div class="col-md-6">
                   {% if scatter_lrfm %}
                   <img src="data:image/png;base64, {{ scatter_lrfm|safe }}" class="mt-2 mx-auto d-block" alt=""
-                  style="width: 27rem;">
+                    style="width: 27rem;">
                   {% endif %}
                 </div>
               </div>
@@ -60,38 +60,106 @@
                 <div class="col">
                   {% if sc_rfm %}
                   <img src="data:image/png;base64, {{ sc_rfm|safe }}" class="mt-2 mx-auto d-block" alt=""
-                  style="width: 27rem;">
+                    style="width: 27rem;">
                   {% endif %}
                 </div>
                 <div class="col">
                   {% if sc_lrfm %}
                   <img src="data:image/png;base64, {{ sc_lrfm|safe }}" class="mt-2 mx-auto d-block" alt=""
-                  style="width: 27rem;">
+                    style="width: 27rem;">
                   {% endif %}
-                </div>            
+                </div>
               </div>
 
               <div class="row mt-2">
-                {% if member_sc_rfm %}
-                <table class="table mt-5">
-                  <thead>
-                    <th>Cluster</th>
-                    <th>Strong Structure</th>
-                    <th>Medium Structure</th>
-                    <th>Weak Structure</th>
-                    <th>No Structure</th>
-                  </thead>
-                  <tbody>
-                    <tbody>
-                      <tr>
+                <div class="col-md-11">
 
-                      </tr>
-                    </tbody>
-                  </tbody>
+                  <div class="row">
+                    {% if member_sc_rfm %}
+                    <h5 class="mt-5">Keanggotaan cluster berdasarkan silhouette coefficient RFM</h5>
+                    <table class="table table-bordered table-hover mt-3 ml-3">
+                      <thead>
+                        <th>Cluster</th>
+                        <th>Strong Structure</th>
+                        <th>Medium Structure</th>
+                        <th>Weak Structure</th>
+                        <th>No Structure</th>
+                        <th>Total</th>
+                      </thead>
+                      <tbody>
+                      <tbody>
+                        {% for data in member_sc_rfm  %}
+                        <tr>
+                          <td>Cluster {{ forloop.counter }}</td>
+                          <td>{{ data.strong_structure }}</td>
+                          <td>{{ data.medium_structure }}</td>
+                          <td>{{ data.weak_structure }}</td>
+                          <td>{{ data.no_structure }}</td>
+                          <td>
+                            {{ data.strong_structure|add:data.medium_structure|add:data.weak_structure|add:data.no_structure }}
+                          </td>
+                        </tr>
+                        {% endfor %}
 
-                </table>  
-                {% endif %}
-                
+                        <tr>
+                          <td>Total</td>
+                          <td>{{ total_member_sc_rfm.0 }}</td>
+                          <td>{{ total_member_sc_rfm.1 }}</td>
+                          <td>{{ total_member_sc_rfm.2 }}</td>
+                          <td>{{ total_member_sc_rfm.3 }}</td>
+                          <td></td>
+                        </tr>
+
+                      </tbody>
+                      </tbody>
+                    </table>
+                    {% endif %}
+                  </div>
+
+                  <div class="row">
+                    {% if member_sc_lrfm %}
+                    <h5 class="mt-3">Keanggotaan cluster berdasarkan silhouette coefficient LRFM</h5>
+                    <table class="table table-bordered table-hover mt-3 ml-3">
+                      <thead>
+                        <th>Cluster</th>
+                        <th>Strong Structure</th>
+                        <th>Medium Structure</th>
+                        <th>Weak Structure</th>
+                        <th>No Structure</th>
+                        <th>Total</th>
+                      </thead>
+                      <tbody>
+                      <tbody>
+                        {% for data in member_sc_lrfm  %}
+                        <tr>
+                          <td>Cluster {{ forloop.counter }}</td>
+                          <td>{{ data.strong_structure }}</td>
+                          <td>{{ data.medium_structure }}</td>
+                          <td>{{ data.weak_structure }}</td>
+                          <td>{{ data.no_structure }}</td>
+                          <td>
+                            {{ data.strong_structure|add:data.medium_structure|add:data.weak_structure|add:data.no_structure }}
+                          </td>
+                        </tr>
+                        {% endfor %}
+
+                        <tr>
+                          <td>Total</td>
+                          <td>{{ total_member_sc_lrfm.0 }}</td>
+                          <td>{{ total_member_sc_lrfm.1 }}</td>
+                          <td>{{ total_member_sc_lrfm.2 }}</td>
+                          <td>{{ total_member_sc_lrfm.3 }}</td>
+                          <td></td>
+                        </tr>
+
+                      </tbody>
+                      </tbody>
+                    </table>
+                    {% endif %}
+                  </div>
+
+                </div>
+
               </div>
             </div>
           </div>
@@ -106,6 +174,11 @@
           {% if karakteristik %}
           <div class="card" style="border-radius: 1rem;">
             <div class="card-body">
+              <div class="row">
+                <div class="col">
+
+                </div>
+              </div>
             </div>
           </div>
           {% endif %}

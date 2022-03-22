@@ -20,6 +20,8 @@ urlpatterns = [
     path('testing/', views.testing, name="testing"),
     #Rekomendasi
     path('rekomendasi/', views.rekomendasi, name="rekomendasi"),
+    #Clear Rekomendasi
+    path('clear-rekomendasi/', views.clear_rekomendasi, name="clear-rekomendasi"),
     #General RFM
     path('general-rfm', views.general_rfm, name = "general-rfm"),
     path('clear-general-rfm', views.clear_general_rfm, name = "clear-general-rfm"),

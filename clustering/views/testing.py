@@ -79,6 +79,7 @@ def testing(request):
                     if sc.avg_score > max_sc_rfm:
                         centroid_rfm = km['centroids']
                         max_sc_rfm = sc.avg_score
+                        request.session['avg_score_rfm'] = sc.avg_score
                         request.session['clusters_rfm'] = km['clusters']
                         request.session['centroids_rfm'] = km['centroids']
                         request.session['data_weight_rfm'] = mix_data_rfm[i]
@@ -102,6 +103,7 @@ def testing(request):
                     if sc.avg_score > max_sc_lrfm:
                         centroid_lrfm = km['centroids']
                         max_sc_lrfm = sc.avg_score
+                        request.session['avg_score_lrfm'] = sc.avg_score
                         request.session['clusters_lrfm'] = km['clusters']
                         request.session['centroids_lrfm'] = km['centroids']
                         request.session['data_weight_lrfm'] = mix_data_lrfm[i]
