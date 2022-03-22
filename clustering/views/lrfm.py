@@ -32,16 +32,16 @@ def lrfm(request):
             data_customers = Customer.objects.filter(id_company = currentuser['id_company']).values()
             orders = Order.objects.filter(id_company = currentuser['id_company']).values()
             data=[[],[],[],[]]
-            current_date = date(2021,4,1)
+            current_date = date(2022,1,1)
             for d in data_customers:
-                length_date = d['last_active']
+                length_date = d['last_active'].date()
                 for order in orders:
-                    if d['name'] == order['name']:
-                        if order['date']<length_date:
+                    if d['id_customer'] == order['id_customer']:
+                        if order['date'] < length_date:
                             length_date = order['date']
                 
-                data[0].append(abs(length_date - d['last_active']).days)
-                data[1].append(abs(d['last_active'] - current_date).days)
+                data[0].append(abs(length_date - d['last_active'].date()).days)
+                data[1].append(abs(d['last_active'].date() - current_date).days)
                 data[2].append(d['orders'])
                 data[3].append(d['total_spend'])
             

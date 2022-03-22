@@ -5,7 +5,7 @@ class Customer(models.Model):
     id_customer = models.AutoField(primary_key=True)
     id_company = models.IntegerField(default=None, blank=True, null=True)
     name = models.CharField(max_length=50)
-    last_active = models.DateField(default=None, blank=True, null=True)
+    last_active = models.DateTimeField(default=None, blank=True, null=True)
     email = models.EmailField()
     orders = models.IntegerField()
     total_spend = models.IntegerField()

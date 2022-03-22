@@ -26,7 +26,8 @@ def managementdata(request):
                 if(isinstance(data[2], datetime)):
                     last_active = data[2]
                 elif len(data[2])>10:
-                    last_active = data[2][:10]
+                    # last_active = data[2][:10]
+                    last_active = datetime.strptime(data[2], "%Y-%m-%dT%H:%M:%S")
                 else:
                     last_active = data[2]
 

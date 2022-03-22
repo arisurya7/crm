@@ -32,7 +32,7 @@ def rfm(request):
             current_date = date(2022,1,1)
             for d in data_customers:
                 # analysis_date = d['last_active']
-                data[0].append(abs(d['last_active']-current_date).days)
+                data[0].append(abs(d['last_active'].date() - current_date).days)
                 data[1].append(d['orders'])
                 data[2].append(d['total_spend'])
             
