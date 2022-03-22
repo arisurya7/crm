@@ -26,7 +26,7 @@ def get_plot(x, y):
     graph = get_graph()
     return graph
 
-def threedim_scatter_plot(x=[],y=[],z=[],data_param=[],labels=[]):
+def threedim_scatter_plot(x=[],y=[],z=[],data_param=[],labels=[], title_scatter = '3D Scatter Plot Cluster'):
     colors= ['red', 'green', 'blue', 'yellow', 'orange', 'black']
     plt.switch_backend('AGG')
     plt.figure()
@@ -65,13 +65,13 @@ def threedim_scatter_plot(x=[],y=[],z=[],data_param=[],labels=[]):
                 ax.set_xlabel('PC 1')
                 ax.set_ylabel('PC 2')
                 ax.set_zlabel('PC 3')
-            ax.set_title('3D Scatter Plot Cluster')
+            ax.set_title(title_scatter)
             ax.legend(title='Cluster Data')
 
     graph = get_graph()
     return graph
 
-def silhouette_bar(score_si, labels):
+def silhouette_bar(score_si, labels, title_sc = 'Silhouette plot for the various clusters'):
     colors= ['red', 'green', 'blue', 'yellow', 'orange', 'black']
     plt.switch_backend('AGG')
     fig, ax = plt.subplots()
@@ -93,7 +93,7 @@ def silhouette_bar(score_si, labels):
         ax.set_xlabel('Silhouette coefficient values')
         ax.set_ylabel('Cluster labels')
         ax.legend(title='Cluster Data')
-        ax.set_title('Silhouette plot for the various clusters')
+        ax.set_title(title_sc)
 
     graph = get_graph()
     return graph

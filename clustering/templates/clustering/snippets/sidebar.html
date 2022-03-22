@@ -48,23 +48,29 @@
           </a>
         </li>
         <li class="nav-item">
-            <a href="{%url 'clustering:lrfm'%}" class="nav-link {% if isLrfm %} active {% endif %}">
-              <i class="fas fa-object-ungroup"></i>
-              <p>LRFM</p>
-            </a>
+          <a href="{%url 'clustering:lrfm'%}" class="nav-link {% if isLrfm %} active {% endif %}">
+            <i class="fas fa-object-ungroup"></i>
+            <p>LRFM</p>
+          </a>
         </li>
         <li class="nav-item">
           <a href="{%url 'clustering:testing'%}" class="nav-link {% if isTesting %} active {% endif %}">
             <i class="fas fa-cogs"></i>
             <p>Pengujian dan Evaluasi</p>
           </a>
-      </li>
+        </li>
+        <li class="nav-item">
+          <a href="{%url 'clustering:rekomendasi'%}" class="nav-link {% if isRekomendasi %} active {% endif %}">
+            <i class="fas fa-address-book"></i>
+            <p>Rekomendasi</p>
+          </a>
+        </li>
         <li class="nav-item">
           <a href="{%url 'clustering:logout'%}" class="nav-link">
             <i class="fas fa-sign-out"></i>
             <p>Logout</p>
           </a>
-      </li>
+        </li>
       </ul>
     </nav>
     <!-- /.sidebar-menu -->

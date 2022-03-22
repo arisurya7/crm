@@ -1,0 +1,128 @@
+{% extends 'clustering/base.html' %}
+{% load index %}
+{% load devide %}
+{% block content %}
+
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">{{ title }}</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active">{{ title }}</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container">
+
+      <div class="row mt-3 ml-3">
+        <div class="col-md-6">
+          <h5 class="mt-2 mb-3">Rekomendasi Cluster</h5>
+          <a href="#" class="btn btn-warning">Clear Rekomendasi Cluster</a>
+        </div>
+      </div>
+
+
+      <div class="row mt-5 ml-3">
+        <h1 class="mb-3">Visualisasi Hasil Clustering</h1>
+        <div class="col">
+          {% if scatter_rfm %}
+          <div class="card" style="border-radius: 1rem;">
+            <div class="card-body">
+
+              <div class="row mt-2">
+                <h3 class="mt-2">Scatter Plot Cluster</h3>
+                <div class="col-md-6">
+                  {% if scatter_rfm %}
+                  <img src="data:image/png;base64, {{ scatter_rfm|safe }}"
+                  class="mt-2 mx-auto d-block" alt="" style="width: 27rem;">
+                  {% endif %}
+                </div>
+                <div class="col-md-6">
+                  {% if scatter_lrfm %}
+                  <img src="data:image/png;base64, {{ scatter_lrfm|safe }}" class="mt-2 mx-auto d-block" alt=""
+                  style="width: 27rem;">
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="row mt-2">
+                <h3 class="mt-2">Silhouette Coefficient</h3>
+                <div class="col">
+                  {% if sc_rfm %}
+                  <img src="data:image/png;base64, {{ sc_rfm|safe }}" class="mt-2 mx-auto d-block" alt=""
+                  style="width: 27rem;">
+                  {% endif %}
+                </div>
+                <div class="col">
+                  {% if sc_lrfm %}
+                  <img src="data:image/png;base64, {{ sc_lrfm|safe }}" class="mt-2 mx-auto d-block" alt=""
+                  style="width: 27rem;">
+                  {% endif %}
+                </div>            
+              </div>
+
+              <div class="row mt-2">
+                {% if member_sc_rfm %}
+                <table class="table mt-5">
+                  <thead>
+                    <th>Cluster</th>
+                    <th>Strong Structure</th>
+                    <th>Medium Structure</th>
+                    <th>Weak Structure</th>
+                    <th>No Structure</th>
+                  </thead>
+                  <tbody>
+                    <tbody>
+                      <tr>
+
+                      </tr>
+                    </tbody>
+                  </tbody>
+
+                </table>  
+                {% endif %}
+                
+              </div>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="row mt-5 ml-3">
+        <h1 class="mb-3">Rekomendasi dan Karakteristik</h1>
+        <div class="col">
+
+          {% if karakteristik %}
+          <div class="card" style="border-radius: 1rem;">
+            <div class="card-body">
+            </div>
+          </div>
+          {% endif %}
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+  <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+
+{% endblock content %}
+
+{% block customscript %}
+<script>
+  e
+</script>
+{% endblock customscript %}

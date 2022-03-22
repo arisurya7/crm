@@ -7,3 +7,4 @@ from .lrfm import *
 from .testing import *
 from .getstrategy import *
 from .logout import *
+from .rekomendasi import *

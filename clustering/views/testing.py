@@ -70,7 +70,8 @@ def testing(request):
             data_sc_rfm = [[], [], [],[]]
             max_sc_rfm = 0
             centroid_rfm = []
-            for i, datatest in enumerate([data_rfm1, data_rfm2, data_rfm3, data_rfm]):
+            mix_data_rfm = [data_rfm1, data_rfm2, data_rfm3, data_rfm]
+            for i, datatest in enumerate(mix_data_rfm):
                 for j in range(k_start,k_end+1):
                     km = Kmeans(data = datatest, k=j, max_iter=30).calculate()
                     sc = SilhouetteCoefficient(km['clusters'], datatest)
@@ -78,6 +79,11 @@ def testing(request):
                     if sc.avg_score > max_sc_rfm:
                         centroid_rfm = km['centroids']
                         max_sc_rfm = sc.avg_score
+                        request.session['clusters_rfm'] = km['clusters']
+                        request.session['centroids_rfm'] = km['centroids']
+                        request.session['data_weight_rfm'] = mix_data_rfm[i]
+                        request.session['score_si_rfm'] = sc.score_si
+
             
             graph_sc_rfm = testing_sc_bar(x_base, data_sc_rfm, "Silhouette Coeffiennt RFM")
             print(data_sc_rfm)
@@ -87,7 +93,8 @@ def testing(request):
             data_sc_lrfm = [[], [], [], []]
             max_sc_lrfm = 0
             centroid_lrfm = []
-            for i, datatest in enumerate([data_lrfm1, data_lrfm2, data_lrfm3, data_lrfm]):
+            mix_data_lrfm = [data_lrfm1, data_lrfm2, data_lrfm3, data_lrfm]
+            for i, datatest in enumerate(mix_data_lrfm):
                 for j in range(k_start,k_end+1):
                     km = Kmeans(data = datatest, k=j, max_iter=30).calculate()
                     sc = SilhouetteCoefficient(km['clusters'], datatest)
@@ -95,6 +102,11 @@ def testing(request):
                     if sc.avg_score > max_sc_lrfm:
                         centroid_lrfm = km['centroids']
                         max_sc_lrfm = sc.avg_score
+                        request.session['clusters_lrfm'] = km['clusters']
+                        request.session['centroids_lrfm'] = km['centroids']
+                        request.session['data_weight_lrfm'] = mix_data_lrfm[i]
+                        request.session['score_si_lrfm'] = sc.score_si
+                        
             
             graph_sc_lrfm = testing_sc_bar(x_base, data_sc_lrfm, "Silhouette Coeffiennt LRFM")
             print(data_sc_lrfm)
