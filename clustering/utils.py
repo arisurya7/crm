@@ -1,4 +1,5 @@
 import builtins
+from turtle import color
 import matplotlib.pyplot as plt
 import base64
 from io import BytesIO
@@ -171,4 +172,58 @@ def testing_sc_bar(x, data, title):
 
     graph = get_graph()
     return graph
+
+def persentage_horizontal_bar(x, y, x_label='X Label', y_label='Y Label', title='Horizontal Bar'):
+    plt.switch_backend('AGG')
+    fig, ax = plt.subplots()
+    x = [ round((data/sum(x))*100,2) for data in x]
+    if len(x)>12:
+        x = x[len(x)-10:]       
+        y = y[len(y)-10:]
+    color_bar = ['orange' if c>len(x)-4 else 'blue' for c in range(len(x))]
+    bars = plt.barh(y,x, color=color_bar)
+    for bar in bars: 
+        width = bar.get_width()
+        label_y = bar.get_y() + bar.get_height() / 2
+        plt.text(width, label_y, s=f'{width}%')
+    
+    ax.set_xlim(0, max(x)+5)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.title(title)
+    graph = get_graph()
+    return graph
+
+def hours_bar(x, y):
+    plt.switch_backend('AGG')
+    width = 0.5 # the width of the bars
+    x = [ str(i) for i in range(len(x))]
+
+    fig, ax = plt.subplots()
+    # fig.set_figwidth(12)
+    rects = ax.bar(x, y, width)
+
+    ax.set_ylabel('Jumlah Pelanggan')
+    ax.set_xlabel('Jam')
+    ax.set_title('Jam Terakhir Transaksi Pelanggan')
+
+    ax.bar_label(rects, padding=3)
+    graph = get_graph()
+    return graph
+
+def pie_chart(data, labels, title="Pie Chart",title_legend="", legend_ket=[]):
+    plt.switch_backend('AGG')
+    fig, ax = plt.subplots()
+    ax.pie(data, labels=labels, autopct='%1.1f%%', wedgeprops=dict(width=.7), startangle=90)
+    ax.axis('equal')
+    plt.title(title)
+   
+    
+    plt.legend(legend_ket, loc='best', title=title_legend, fontsize=8)
+    graph = get_graph()
+    return graph
+
+
+
+
 

@@ -1,5 +1,7 @@
+from datetime import datetime
 from django.shortcuts import render, redirect
-from clustering.utils import threedim_scatter_plot, silhouette_bar
+from numpy import character
+from clustering.utils import threedim_scatter_plot, silhouette_bar, persentage_horizontal_bar, hours_bar, pie_chart
 from .checkmodel import checkTypeModel, checkSilhouetteStructure
 from clustering.models import Customer, Order
 
@@ -57,6 +59,7 @@ def rekomendasi(request):
             orders = Order.objects.filter(id_company = currentuser['id_company']).values()
             
             #Devide data region, hours by cluster
+            countries = [{'domestik':0, 'manca negara':0} for i in range(max(clusters)+1)]
             regions = [{} for i in range(max(clusters)+1)]
             hours = [{} for i in range(max(clusters)+1)]
             id_customers = [[] for i in range(max(clusters)+1)]
@@ -64,38 +67,53 @@ def rekomendasi(request):
                 for j in range(max(clusters)+1):
                     if j == clusters[i]:
                         id_customers[j].append(data_customers[i]['id_customer'])
+                        #Country
+                        if data_customers[i]['country'] == "ID":
+                            countries[j]["domestik"] += 1
+                        else:
+                            countries[j]["manca negara"] += 1
+
                         #Region
                         if data_customers[i]['region'] not in regions[j].keys():
                             regions[j][data_customers[i]['region']] = 1
                         else:
-                            regions[j][data_customers[i]['region']] = regions[j][data_customers[i]['region']] + 1
+                            regions[j][data_customers[i]['region']] +=1
                         
                         #Hours
-                        # if data_customers[i]['last_active'].hour not in hours[j].keys():
-                        #     hours[j][data_customers[i]['last_active'].hour] = 1
-                        # else:
-                        #     hours[j][data_customers[i]['last_active'].hour] = hours[j][data_customers[i]['last_active'].hour] + 1
+                        if data_customers[i]['last_active'].hour not in hours[j].keys():
+                            hours[j][data_customers[i]['last_active'].hour] = 1
+                        else:
+                            hours[j][data_customers[i]['last_active'].hour] += 1
                         
                         break
             
             #Devide data month by cluster
             month = [{} for i in range(max(clusters)+1)]
+            month_category = [{'awal bulan':0, 'tengah bulan':0, 'akhir bulan':0} for i in range(max(clusters)+1)]
             for order in orders:
                 for j, ids in enumerate(id_customers):
                     if order['id_customer'] in ids:
                         if order['date'].month not in month[j].keys():
                             month[j][order['date'].month] = 1
                         else:
-                            month[j][order['date'].month] = month[j][order['date'].month] + 1
+                            month[j][order['date'].month] += 1
+                        
+                        if order['date'].day < 8:
+                            month_category[j]['awal bulan'] += 1
+                        elif order['date'].day > 23:
+                            month_category[j]['akhir bulan'] += 1
+                        else:
+                            month_category[j]['tengah bulan'] += 1
+
                         break
             
             #Get category time by cluster
-            category_time = [{'pagi':0, 'siang':0, 'sore':0, 'malam':0, 'tengahmalam':0} for i in range(max(clusters)+1)]
+            category_time = [{'pagi':0, 'siang':0, 'sore':0, 'malam':0, 'dinihari':0} for i in range(max(clusters)+1)]
             for i, value in enumerate(hours):
                 for k,v in value.items():
-                    if k > 0 and k < 6:
-                        category_time[i]['tengahmalam'] = category_time[i]['tengahmalam'] + v
-                    elif k >= 6 and k < 11:
+                    if k > 0 and k < 5:
+                        category_time[i]['dinihari'] = category_time[i]['dinihari'] + v
+                    elif k >= 5 and k < 11:
                         category_time[i]['pagi'] = category_time[i]['pagi'] + v
                     elif k >= 11 and k < 15:
                         category_time[i]['siang'] = category_time[i]['siang'] + v
@@ -105,17 +123,29 @@ def rekomendasi(request):
                         category_time[i]['malam'] = category_time[i]['malam']+v
             
             regions_sort = sortDataByValues(regions)
-            # hours_sort = sortDataByKeys(hours)
+            hours_sort = sortDataByKeys(hours)
             month_sort = sortDataByValues(month)
-
-            print(regions_sort)
-            print(month_sort)
-            print(category_time)
             
 
-
-        
-        
+            #Merge Graph
+            characteristic_graph = []
+            for i in range(max(clusters)+1):
+                month_labels = [(datetime.strptime(str(month),"%m")).strftime("%b") for month in month_sort[i]] 
+                country_bar = pie_chart(countries[i].values(), countries[i].keys(), "Pelanggan Berdasarkan Kenegaraan", "Kenegaraan", ['dalam negeri', 'luar negeri'])
+                regions_bar = persentage_horizontal_bar(list(regions_sort[i].values()), list(regions_sort[i].keys()), x_label='Persentase Jumlah Pelanggan Pada Cluster', y_label='Region', title='Pelanggan Berdasarkan Region')
+                month_bar = persentage_horizontal_bar(list(month_sort[i].values()), month_labels, x_label="Persentase Jumlah Pelanggan Pada Cluster", y_label="Bulan", title="Order Berdasarkan Bulan")
+                month_category_bar = pie_chart(month_category[i].values(), month_category[i].keys(), "Order Berdasarkan Kategori Bulan", "Tanggal", ['1-7', '8-22','>=23'])
+                bar_hours = hours_bar(hours_sort[i].keys(), hours_sort[i].values())
+                category_time_bar = pie_chart(category_time[i].values(), category_time[i].keys(), "Transaksi Berdasarkan Kategori Waktu", "Jam", ['5.00 - 10.59', '11.00-14.59','15.00-18.59', '17.00-23.59', '00.00-4.59'])
+                characteristic_graph.append([regions_bar, country_bar, month_bar, month_category_bar, bar_hours, category_time_bar])
+            
+            context['characteristic_graph'] = characteristic_graph
+           
+           
+            print(countries)
+            print(id_customers)
+            print(category_time)
+            
         
         return render(request, 'clustering/rekomendasi/index.html', context)
     else:
@@ -170,7 +200,7 @@ def countMemberByModel(score_si, clusters):
 def sortDataByValues(data):
     data_sort = []
     for d in data:
-        data_sort. append(sorted(d.items(), key=lambda x: x[1], reverse=True))
+        data_sort. append(dict(sorted(d.items(), key=lambda x: x[1], reverse=False)))
     return data_sort
         
 def sortDataByKeys(data):

@@ -168,17 +168,76 @@
       </div>
 
       <div class="row mt-5 ml-3">
-        <h1 class="mb-3">Rekomendasi dan Karakteristik</h1>
+        <h1 class="mb-3">Karakteristik Hasil Rekomendasi</h1>
         <div class="col">
 
-          {% if karakteristik %}
+          {% if characteristic_graph %}
           <div class="card" style="border-radius: 1rem;">
             <div class="card-body">
+
+              
+              {% for graph in characteristic_graph  %}
               <div class="row">
                 <div class="col">
-
+                  <h3 class="fw-bold mt-5">Cluster {{ forloop.counter }}</h3>
                 </div>
               </div>
+              <div class="row">
+                <div class="col">
+                  <div class="row">
+                    <div class="col">
+                      <h4 class="mt-2 text-center">Geografi Pelanggan</h4>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <img src="data:image/png;base64, {{ graph.0|safe }}" class="mt-2 mx-auto d-block" style="width: 27rem;" alt="">
+                    </div>
+                    <div class="col">
+                      <img src="data:image/png;base64, {{ graph.1|safe }}" class="mt-2 mx-auto d-block" style="width: 27rem;" alt="">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col">
+                  <div class="row">
+                    <div class="col">
+                      <h4 class="mt-2 text-center">Order Pelanggan</h4>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <img src="data:image/png;base64, {{ graph.2|safe }}" class="mt-2 mx-auto d-block" style="width: 27rem;" alt="">
+                    </div>
+                    <div class="col">
+                      <img src="data:image/png;base64, {{ graph.3|safe }}" class="mt-2 mx-auto d-block" style="width: 27rem;" alt="">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col">
+                  <div class="row">
+                    <div class="col">
+                      <h4 class="mt-2 text-center">Waktu Transaksi Pelanggan</h4>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <img src="data:image/png;base64, {{ graph.4|safe }}" class="mt-2 mx-auto d-block" style="width: 27rem;" alt="">
+                    </div>
+                    <div class="col">
+                      <img src="data:image/png;base64, {{ graph.5|safe }}" class="mt-2 mx-auto d-block" style="width: 27rem;" alt="">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+                
+              
             </div>
           </div>
           {% endif %}
