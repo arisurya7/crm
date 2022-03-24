@@ -26,11 +26,9 @@
 
       <div class="row mt-3 ml-3">
         <div class="col-md-6">
-          <h5 class="mt-2 mb-3">Rekomendasi Cluster</h5>
           <a href="{%url 'clustering:clear-rekomendasi'%}" class="btn btn-warning">Clear Rekomendasi Cluster</a>
         </div>
       </div>
-
 
       <div class="row mt-5 ml-3">
         <h1 class="mb-3">Visualisasi Hasil Clustering</h1>
@@ -174,27 +172,243 @@
           {% if characteristic_graph %}
           <div class="card" style="border-radius: 1rem;">
             <div class="card-body">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="row">
+                    <div class="col-md-8">
+                      <h2 class="mt-3 fw-bold">Rekomendasi Cluster Pelanggan</h2>
+                      <p>
+                        Model Atribut Data Terbaik : {{ best_model }} <br>
+                        Jumlah k Cluster Terbaik : {{ best_k }} <br>
+                        Score Silhouette Coefficient : {{ best_si.0|floatformat:4 }} ({{ best_si.1 }}) <br>
+                        Validasi Perhitungan TOPSIS : {{ validasi_topsis }}% <br>
+                        Rank Consistency : {{ accuracy_rank_consistency }}%
+                      </p>
+                    </div>
+                    <div class="col-md-4">
+                      {% for cluster in clusters %}
+                      <input type="hidden" class="index-cluster" name="index_cluster[]" value="{{ cluster.0 }}">
+                      <input type="hidden" class="customer-cluster" name="number_cluster[]" value="{{ cluster.1 }}">
+                      {% endfor %}
+                      <a class="btn btn-primary float-right" onclick="updateClusterCustomer()">Update Cluster
+                        Customer</a>
+                    </div>
+                  </div>
 
-              
+                  {% if centroids.0|length == 3 %}
+
+                  <div class="row">
+                    <div class="col">
+                      <table class="table table-bordered table-hover">
+                        <thead>
+                          <tr>
+                            <th rowspan="2" class="align-middle text-center">Peringkat</th>
+                            <th rowspan="2" col="2" class="align-middle text-center">Cluster</th>
+                            <th colspan="3" class="text-center">Centroids</th>
+                            <th rowspan="2" class="align-middle text-center">Type</th>
+                            <th rowspan="2" class="align-middle text-center">Strategy</th>
+                          </tr>
+                          <tr>
+                            <th class="text-center">Recency</th>
+                            <th class="text-center">Frequency</th>
+                            <th class="text-center">Monetary</th>
+                          </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                          {% for data in centroids_type  %}
+                          <tr>
+                            <td>{{ preferensi|index:forloop.counter0|index:2 }}</td>
+                            <td>Cluster {{ forloop.counter }}</td>
+                            <td>{{ data.r }}</td>
+                            <td>{{ data.f }}</td>
+                            <td>{{ data.m }}</td>
+                            <td>{{ data.type }}</td>
+                            <td><a class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#modal-strategy"
+                                onclick="seeStrategy('{{ data.strategy.name}}', '{{ data.type }}', '{{ data.strategy }}')">see
+                                strategy</a></td>
+                          </tr>
+
+                          {% endfor %}
+
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <h2 class="mt-5 mb-3 fw-bold">Karakteristik Cluster</h2>
+                    <div class="col">
+                      {% if actual_cluster %}
+                      <div class="row mt-4">
+                        <div class="col-md-12">
+                          <h4 class="mt-3 mb-3 fw-bold">Nilai Aktual RFM</h4>
+                          <table class="table table-bordered table-hover">
+                            <thead>
+                              <tr>
+                                <th>Cluster</th>
+                                <th>Recency</th>
+                                <th>Frequency</th>
+                                <th>Monetary</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for data in actual_cluster  %}
+                              <tr>
+                                <td>{{ data.cluster }}</td>
+                                <td>{{ data.r|floatformat:0 }}</td>
+                                <td>{{ data.f|floatformat:0 }}</td>
+                                <td>{{ data.m|floatformat:0 }}</td>
+                              </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                      {% endif %}
+                    </div>
+                  </div>
+
+                  {% else %}
+
+                  <div class="row">
+                    <div class="col">
+                      <table class="table table-bordered table-hover">
+                        <thead>
+                          <tr>
+                            <th rowspan="2" class="align-middle text-center">Peringkat</th>
+                            <th rowspan="2" col="2" class="align-middle text-center">Cluster</th>
+                            <th colspan="4" class="text-center">Centroids</th>
+                            <th rowspan="2" class="align-middle text-center">Type</th>
+                            <th rowspan="2" class="align-middle text-center">Strategy</th>
+                          </tr>
+                          <tr>
+                            <th class="text-center">Length</th>
+                            <th class="text-center">Recency</th>
+                            <th class="text-center">Frequency</th>
+                            <th class="text-center">Monetary</th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          {% for data in centroids_type  %}
+                          <tr>
+                            <td>{{ preferensi|index:forloop.counter0|index:2 }}</td>
+                            <td>Cluster {{ forloop.counter }}</td>
+                            <td>{{ data.l }}</td>
+                            <td>{{ data.r }}</td>
+                            <td>{{ data.f }}</td>
+                            <td>{{ data.m }}</td>
+                            <td>{{ data.type }}</td>
+                            <td><a class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#modal-strategy"
+                                onclick="seeStrategy('{{ data.strategy.name}}', '{{ data.type }}', '{{ data.strategy }}')">see
+                                strategy</a></td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <h2 class="mt-5 mb-3 fw-bold">Karakteristik Cluster</h2>
+                    <div class="col">
+                      {% if actual_cluster %}
+                      <div class="row mt-4">
+                        <div class="col-md-12">
+                          <h4 class="mt-3 mb-3 fw-bold">Nilai Aktual RFM</h4>
+                          <table class="table table-bordered table-hover">
+                            <thead>
+                              <tr>
+                                <th>Cluster</th>
+                                <th>Length</th>
+                                <th>Recency</th>
+                                <th>Frequency</th>
+                                <th>Monetary</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for data in actual_cluster  %}
+                              <tr>
+                                <td>{{ data.cluster }}</td>
+                                <td>{{ data.l|floatformat:0 }}</td>
+                                <td>{{ data.r|floatformat:0 }}</td>
+                                <td>{{ data.f|floatformat:0 }}</td>
+                                <td>{{ data.m|floatformat:0 }}</td>
+                              </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                      {% endif %}
+                    </div>
+                  </div>
+
+                  {% endif %}
+
+                </div>
+              </div>
+
+
               {% for graph in characteristic_graph  %}
               <div class="row">
                 <div class="col">
-                  <h3 class="fw-bold mt-5">Cluster {{ forloop.counter }}</h3>
+                  <h4 class="fw-bold mt-5">Pelanggan Cluster {{ forloop.counter }} (Peringkat
+                    {{ preferensi|index:forloop.counter0|index:2 }})</h4>
                 </div>
               </div>
+
+              <div class="row">
+                <div class="col">
+                  <h4 class="mt-3 mb-3">Data Pelanggan </h4>
+                  <table class="table table-bordered table-hover table-actual-cluster-member">
+                    <thead>
+                      <tr>
+                        <th>No.</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Last Active</th>
+                        <th>Order</th>
+                        <th>Total Spend</th>
+                        <th>Cluster</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for data in actual_cluster_member|index:forloop.counter0  %}
+                      <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ data.name }}</td>
+                        <td>{{ data.email }}</td>
+                        <td>{{ data.last_active }}</td>
+                        <td>{{ data.order }}</td>
+                        <td>{{ data.total_spend }}</td>
+                        <td>{{ data.cluster }}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+
               <div class="row">
                 <div class="col">
                   <div class="row">
                     <div class="col">
-                      <h4 class="mt-2 text-center">Geografi Pelanggan</h4>
+                      <h4 class="mt-5 text-center">Geografi Pelanggan</h4>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col">
-                      <img src="data:image/png;base64, {{ graph.0|safe }}" class="mt-2 mx-auto d-block" style="width: 27rem;" alt="">
+                      <img src="data:image/png;base64, {{ graph.0|safe }}" class="mt-2 mx-auto d-block"
+                        style="width: 27rem;" alt="">
                     </div>
                     <div class="col">
-                      <img src="data:image/png;base64, {{ graph.1|safe }}" class="mt-2 mx-auto d-block" style="width: 27rem;" alt="">
+                      <img src="data:image/png;base64, {{ graph.1|safe }}" class="mt-2 mx-auto d-block"
+                        style="width: 27rem;" alt="">
                     </div>
                   </div>
                 </div>
@@ -209,10 +423,12 @@
                   </div>
                   <div class="row">
                     <div class="col">
-                      <img src="data:image/png;base64, {{ graph.2|safe }}" class="mt-2 mx-auto d-block" style="width: 27rem;" alt="">
+                      <img src="data:image/png;base64, {{ graph.2|safe }}" class="mt-2 mx-auto d-block"
+                        style="width: 27rem;" alt="">
                     </div>
                     <div class="col">
-                      <img src="data:image/png;base64, {{ graph.3|safe }}" class="mt-2 mx-auto d-block" style="width: 27rem;" alt="">
+                      <img src="data:image/png;base64, {{ graph.3|safe }}" class="mt-2 mx-auto d-block"
+                        style="width: 27rem;" alt="">
                     </div>
                   </div>
                 </div>
@@ -227,17 +443,19 @@
                   </div>
                   <div class="row">
                     <div class="col">
-                      <img src="data:image/png;base64, {{ graph.4|safe }}" class="mt-2 mx-auto d-block" style="width: 27rem;" alt="">
+                      <img src="data:image/png;base64, {{ graph.4|safe }}" class="mt-2 mx-auto d-block"
+                        style="width: 27rem;" alt="">
                     </div>
                     <div class="col">
-                      <img src="data:image/png;base64, {{ graph.5|safe }}" class="mt-2 mx-auto d-block" style="width: 27rem;" alt="">
+                      <img src="data:image/png;base64, {{ graph.5|safe }}" class="mt-2 mx-auto d-block"
+                        style="width: 27rem;" alt="">
                     </div>
                   </div>
                 </div>
               </div>
               {% endfor %}
-                
-              
+
+
             </div>
           </div>
           {% endif %}
@@ -251,10 +469,94 @@
 </div>
 <!-- /.content-wrapper -->
 
+<!-- Modal  -->
+<div class="modal fade" id="modal-strategy" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center w-100" id="exampleModalLabel">Strategi & Saran</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="data-strategy" class="p-3"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock content %}
 
 {% block customscript %}
 <script>
-  e
+  $('.table-actual-cluster-member').DataTable({
+    lengthMenu: [5, 10, 20, 50, 100, 200, 500]
+  });
+
+
+  function updateClusterCustomer() {
+    var list_clusters = []
+    var input_clusters = document.querySelectorAll('input[type="hidden"].customer-cluster')
+    var input_index = document.querySelectorAll('input[type="hidden"].index-cluster')
+    for (var i = 0; i < input_clusters.length; i++) {
+      list_clusters.push([parseInt(input_index[i].value), input_clusters[i].value])
+    }
+    console.log(list_clusters)
+    if (list_clusters.length > 0) {
+      $.ajax({
+        url: "{% url 'clustering:update-cluster' %}",
+        method: 'POST',
+        data: {
+          'clusters[]': list_clusters,
+          csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+
+        success: function (response) {
+          alert(response['status'])
+        },
+
+        error: function (response) {
+          alert('Failed')
+        },
+
+      })
+    }
+
+  }
+
+
+  function seeStrategy(name, saran, strategy) {
+    console.log(strategy)
+    if (strategy) {
+      $.ajax({
+        url: "{% url 'clustering:get-strategy' %}",
+        method: 'GET',
+        data: {
+          code_strategy: strategy
+        },
+        success: function (data) {
+          console.log(data)
+          if (data) {
+            $('#data-strategy').empty()
+            title = "<h3 class='text-center mb-3'>" + data.data.name +
+              "</h3><h5>Strategi :</h5><ol type='1'>"
+            $('#data-strategy').append(title)
+
+            $.each(data.data.strategy, function (i, v) {
+              st = "<li>" + v + "</li>"
+              $('#data-strategy').append(st)
+            })
+            $('#data-strategy').append("</ol><h5>Saran :</h5><ol type='1' class='mb-3'>")
+
+            $.each(data.data.saran, function (i, v) {
+              st = "<li>" + v + "</li>"
+              $('#data-strategy').append(st)
+            })
+            $('#data-strategy').append("</ol>")
+
+          }
+        }
+      })
+    }
+  }
 </script>
 {% endblock customscript %}

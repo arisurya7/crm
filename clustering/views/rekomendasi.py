@@ -1,6 +1,5 @@
 from datetime import datetime
 from django.shortcuts import render, redirect
-from numpy import character
 from clustering.utils import threedim_scatter_plot, silhouette_bar, persentage_horizontal_bar, hours_bar, pie_chart
 from .checkmodel import checkTypeModel, checkSilhouetteStructure
 from clustering.models import Customer, Order
@@ -41,6 +40,7 @@ def rekomendasi(request):
         centroids = []
         data_weight = []
         score_si = []
+        data_model = []
 
         if request.session.has_key('avg_score_rfm') and request.session.has_key('avg_score_lrfm'):
             if request.session['avg_score_rfm'] > request.session['avg_score_lrfm']:
@@ -48,15 +48,31 @@ def rekomendasi(request):
                 centroids = request.session['centroids_rfm']
                 data_weight = request.session['data_weight_rfm']
                 score_si = request.session['score_si_rfm']
+                preferensi = request.session['preferensi_rfm']
+                validasi_topsis = request.session['validasi_rfm']
+                accuray_rank_consistency = request.session['rc_rfm']
+                best_model = "RFM"
+                best_si = [request.session['avg_score_rfm'], checkSilhouetteStructure(request.session['avg_score_rfm'])]
+                
             else:
                 clusters = request.session['clusters_lrfm']
                 centroids = request.session['centroids_lrfm']
                 data_weight = request.session['data_weight_lrfm']
                 score_si = request.session['score_si_lrfm']
-            
+                preferensi = request.session['preferensi_lrfm']
+                validasi_topsis = request.session['validasi_lrfm']
+                accuray_rank_consistency = request.session['rc_lrfm']
+                best_model = "LRFM"
+                best_si = [request.session['avg_score_lrfm'], checkSilhouetteStructure(request.session['avg_score_lrfm'])]
+                
+            best_k = max(clusters)+1
+            data_rfm = request.session['data_rfm']
+            data_lrfm = request.session['data_lrfm']
+
             
             data_customers = Customer.objects.filter(id_company = currentuser['id_company']).values()
             orders = Order.objects.filter(id_company = currentuser['id_company']).values()
+            all_id = [data['id_customer'] for data in data_customers]
             
             #Devide data region, hours by cluster
             countries = [{'domestik':0, 'manca negara':0} for i in range(max(clusters)+1)]
@@ -141,12 +157,82 @@ def rekomendasi(request):
             
             context['characteristic_graph'] = characteristic_graph
            
+
+           #Table Characteristic
+            centroids_type = []
+            if len(data_weight) == 3:                
+                for data in centroids:
+                    type_r = checkTypeModel('R', data[0], data_weight[0])
+                    type_f = checkTypeModel('F', data[1], data_weight[1])
+                    type_m = checkTypeModel('M', data[2], data_weight[2])
+                    centroids_type.append(dict({'r':data[0], 'f':data[1], 'm':data[2], 'type':type_r+type_f+type_m, 'strategy':type_f+type_m}))
+
+                    actual_cluster_member = []
+                    actual_cluster = []
+                    for i in range(max(clusters)+1):
+                        actual_cluster_member.append([])
+                        r_temp = []
+                        f_temp = []
+                        m_temp = []
+                        for j in range(len(clusters)):
+                            row_data = {'name':'','email':'','last_active':0, 'order':0, 'total_spend':0, 'cluster':i+1}
+                            if i == clusters[j]:
+                                row_data['name'] = data_customers[j]['name']
+                                row_data['email'] = data_customers[j]['email']
+                                row_data['last_active'] = data_customers[j]['last_active']
+                                row_data['order'] = data_customers[j]['orders']
+                                row_data['total_spend'] = data_customers[j]['total_spend']
+                                
+                                actual_cluster_member[i].append(row_data)
+                                r_temp.append(data_rfm[j][0])
+                                f_temp.append(data_rfm[j][1])
+                                m_temp.append(data_rfm[j][2])
+                                
+                        actual_cluster.append({'cluster': 'Cluster '+str(i+1), 'r':sum(r_temp)/len(r_temp), 'f':sum(f_temp)/len(f_temp), 'm':sum(m_temp)/len(m_temp)})
+            else:
+                for data in centroids:
+                    type_l = checkTypeModel('L', data[0], data_weight[0])
+                    type_r = checkTypeModel('R', data[1], data_weight[1])
+                    type_f = checkTypeModel('F', data[2], data_weight[2])
+                    type_m = checkTypeModel('M', data[3], data_weight[3])
+                    centroids_type.append(dict({'l':data[0],'r':data[1], 'f':data[2], 'm':data[3], 'type':type_l+type_r+type_f+type_m, 'strategy':type_f+type_m}))
+
+                    actual_cluster_member = []
+                    actual_cluster = []
+                    for i in range(max(clusters)+1):
+                        actual_cluster_member.append([])
+                        l_temp = []
+                        r_temp = []
+                        f_temp = []
+                        m_temp = []
+                        for j in range(len(clusters)):
+                            row_data = {'name':'','email':'','last_active':0, 'order':0, 'total_spend':0, 'cluster':i+1}
+                            if i == clusters[j]:
+                                row_data['name'] = data_customers[j]['name']
+                                row_data['email'] = data_customers[j]['email']
+                                row_data['last_active'] = data_customers[j]['last_active']
+                                row_data['order'] = data_customers[j]['orders']
+                                row_data['total_spend'] = data_customers[j]['total_spend']
+                                actual_cluster_member[i].append(row_data)
+                                l_temp.append(data_lrfm[j][0])
+                                r_temp.append(data_lrfm[j][1])
+                                f_temp.append(data_lrfm[j][2])
+                                m_temp.append(data_lrfm[j][3])
+                                
+                        actual_cluster.append({'cluster': 'Cluster '+str(i+1), 'l':sum(l_temp)/len(l_temp), 'r':sum(r_temp)/len(r_temp), 'f':sum(f_temp)/len(f_temp), 'm':sum(m_temp)/len(m_temp)})
            
-            print(countries)
-            print(id_customers)
-            print(category_time)
             
-        
+            context['best_model'] = best_model
+            context['best_k'] = best_k
+            context['best_si'] = best_si
+            context['clusters'] = [list(pair) for pair in zip(all_id, clusters)]
+            context['centroids'] = centroids
+            context['centroids_type'] = centroids_type
+            context['actual_cluster'] = actual_cluster
+            context['actual_cluster_member'] = actual_cluster_member
+            context['preferensi'] = preferensi
+            context['validasi_topsis'] = validasi_topsis
+            context['accuracy_rank_consistency'] = accuray_rank_consistency
         return render(request, 'clustering/rekomendasi/index.html', context)
     else:
         return redirect('login')
@@ -158,12 +244,20 @@ def clear_rekomendasi(request):
         del request.session['centroids_rfm']
         del request.session['data_weight_rfm']
         del request.session['score_si_rfm']
+        del request.session['preferensi_rfm']
+        del request.session['data_rfm']
+        del request.session['validasi_rfm']
+        del request.session['rc_rfm']
 
         del request.session['avg_score_lrfm']
         del request.session['clusters_lrfm']
         del request.session['centroids_lrfm']
         del request.session['data_weight_lrfm']
         del request.session['score_si_lrfm']
+        del request.session['preferensi_lrfm']
+        del request.session['data_lrfm']
+        del request.session['validasi_lrfm']
+        del request.session['rc_lrfm']
     
         return redirect('clustering:rekomendasi')
     except:

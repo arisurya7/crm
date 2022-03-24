@@ -4,10 +4,9 @@ from clustering.algorithm.kmeans import Kmeans
 from clustering.algorithm.minmaxnorm import MinMaxNorm
 from clustering.algorithm.silhouette_coefficient import SilhouetteCoefficient
 from clustering.algorithm.topsis import Topsis
-from clustering.models import Customer, Order, WeightLRFM
+from clustering.models import Customer, Order
 from clustering.utils import testing_sc_bar
 from copy import deepcopy
-from .checkmodel import checkTypeModel, checkSilhouetteStructure
 import numpy as np
 
 
@@ -43,13 +42,17 @@ def testing(request):
                 data[2].append(d['orders'])
                 data[3].append(d['total_spend'])
             
+            #session data
+            request.session['data_rfm'] = list(map(list, zip(*data[1:])))
+            request.session['data_lrfm'] = list(map(list, zip(*data)))
+            
             #normalization
             data_norm = MinMaxNorm(data).calculate()
             #data rfm
             data_rfm = data_norm[1:]
             #data rfm
             data_lrfm = data_norm.copy()
-    
+            
             #pembobotan rfm
             w_rfm1 = [0.0975, 0.3446, 0.5583]
             data_rfm1 = [list(data*w_rfm1[i]) for i, data in enumerate(np.array(data_rfm))]
@@ -131,11 +134,13 @@ def testing(request):
             top_pref_rfm = t_rfm.top_pref
             low_pref_rfm = t_rfm.low_pref
             preferensiRfm = t_rfm.preferensi()
+            request.session['preferensi_rfm'] = [[data[0], data[1], int(data[2])] for data in preferensiRfm]
             print(preferensiRfm)
 
             #validasi rfm
             manual_rank_rfm = ['Cluster 2', 'Cluster 1']
             validasi_rfm = validate_topsis(preferensiRfm, manual_rank_rfm)
+            request.session['validasi_rfm'] = validasi_rfm["accuracy"] 
             print(validasi_rfm)
 
             #topsis lrfm
@@ -154,11 +159,13 @@ def testing(request):
             top_pref_lrfm = t_lrfm.top_pref
             low_pref_lrfm = t_lrfm.low_pref
             preferensiLrfm = t_lrfm.preferensi()
+            request.session['preferensi_lrfm'] = [[data[0], data[1], int(data[2])] for data in preferensiLrfm]
             print(preferensiLrfm)
 
             #validasi rfm
             manual_rank_lrfm = ['Cluster 2', 'Cluster 1']
             validasi_lrfm = validate_topsis(preferensiLrfm, manual_rank_lrfm)
+            request.session['validasi_lrfm'] = validasi_lrfm["accuracy"]
             print(validasi_lrfm)
 
             #rank consistency rfm
@@ -186,6 +193,7 @@ def testing(request):
                     consitency.append(0)
             print('Akurasi Rank Consistency : '+ str(sum(consitency)/len(consitency)*100)+'%')
             accuracy_rankConsistencyRfm = sum(consitency)/len(consitency)*100
+            request.session['rc_rfm'] = accuracy_rankConsistencyRfm
 
             #rank consistenct lrfm
             data_uji = {}
@@ -212,6 +220,7 @@ def testing(request):
                     consitency.append(0)
             print('Akurasi Rank Consistency : '+ str(sum(consitency)/len(consitency)*100)+'%')
             accuracy_rankConsistencyLrfm = sum(consitency)/len(consitency)*100
+            request.session['rc_lrfm'] = accuracy_rankConsistencyLrfm
 
 
             context['k_start'] = k_start
