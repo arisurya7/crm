@@ -105,4 +105,21 @@ def update_cluster(request):
             return JsonResponse({'status':'Success'})
     else:
         return redirect('login')
-    
+
+def delete_all_customer(request):
+    if request.session.has_key("user"):
+        current_user = request.session["user"]
+        if request.POST.get('delete_all'):
+            Customer.objects.filter(id_company=current_user['id_company']).delete()
+            return redirect('clustering:managementdata')
+    else:
+        return redirect('login')
+
+def delete_all_order(request):
+    if request.session.has_key("user"):
+        current_user = request.session["user"]
+        if request.POST.get('delete_all'):
+            Order.objects.filter(id_company=current_user['id_company']).delete()
+            return redirect('clustering:managementdata')
+    else:
+        return redirect('login')

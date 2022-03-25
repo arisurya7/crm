@@ -10,6 +10,8 @@ urlpatterns = [
     #Management Data
     path('managementdata/', views.managementdata, name="managementdata"),
     path('managementdata/update-cluster', views.update_cluster, name="update-cluster"),
+    path('managementdata/delete-all-customer', views.delete_all_customer, name="delete-all-customer"),
+    path('managementdata/delete-all-order', views.delete_all_order, name="delete-all-order"),
     #Weight Model
     path('weightmodel/', views.weightmodel, name="weightmodel"),
     #RFM Model
