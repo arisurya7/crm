@@ -1,4 +1,3 @@
-from multiprocessing import context
 from django.shortcuts import render, redirect
 from datetime import date,datetime
 from clustering.algorithm.kmeans import Kmeans
@@ -15,7 +14,7 @@ def testing(request):
     if request.session.has_key("user"):
         currentuser = request.session['user']
         context = {
-            'title' : 'Testing',
+            'title' : 'Skenario 2',
             'isTesting' : True
         }
 
@@ -118,129 +117,14 @@ def testing(request):
             print(data_sc_lrfm)
             print(centroid_lrfm)
 
-
-            #topsis rfm
-            alternative_label = ['Cluster '+str(i+1) for i in range(len(centroid_rfm))]
-            label_topsis = ['r','f','m']
-            benefit = ['f', 'm']
-            cost = ['r']
-            data_topsis_rfm={}
-            for j in range(len(centroid_rfm[0])):
-                temp=[]
-                for i in range(len(centroid_rfm)):
-                    temp.append(centroid_rfm[i][j])
-                data_topsis_rfm[label_topsis[j]] = temp
-
-            t_rfm = Topsis(data=data_topsis_rfm, benefit=benefit, cost=cost,alternative=alternative_label)
-            top_pref_rfm = t_rfm.top_pref
-            low_pref_rfm = t_rfm.low_pref
-            preferensiRfm = t_rfm.preferensi()
-            request.session['preferensi_rfm'] = [[data[0], data[1], int(data[2])] for data in preferensiRfm]
-            print(preferensiRfm)
-
-            #validasi rfm
-            manual_rank_rfm = ['Cluster 2', 'Cluster 1']
-            validasi_rfm = validate_topsis(preferensiRfm, manual_rank_rfm)
-            request.session['validasi_rfm'] = validasi_rfm["accuracy"] 
-            print(validasi_rfm)
-
-            #topsis lrfm
-            alternative_label = ['Cluster '+str(i+1) for i in range(len(centroid_rfm))]
-            label_topsis = ['l','r','f','m']
-            benefit = ['f', 'm']
-            cost = ['l','r']
-            data_topsis_lrfm={}
-            for j in range(len(centroid_rfm[0])):
-                temp=[]
-                for i in range(len(centroid_rfm)):
-                    temp.append(centroid_rfm[i][j])
-                data_topsis_lrfm[label_topsis[j]] = temp
-
-            t_lrfm = Topsis(data=data_topsis_lrfm, benefit=benefit, cost=cost,alternative=alternative_label)
-            top_pref_lrfm = t_lrfm.top_pref
-            low_pref_lrfm = t_lrfm.low_pref
-            preferensiLrfm = t_lrfm.preferensi()
-            request.session['preferensi_lrfm'] = [[data[0], data[1], int(data[2])] for data in preferensiLrfm]
-            print(preferensiLrfm)
-
-            #validasi rfm
-            manual_rank_lrfm = ['Cluster 2', 'Cluster 1']
-            validasi_lrfm = validate_topsis(preferensiLrfm, manual_rank_lrfm)
-            request.session['validasi_lrfm'] = validasi_lrfm["accuracy"]
-            print(validasi_lrfm)
-
-            #rank consistency rfm
-            data_uji = {}
-            consitency = []
-            matrix_rankConsistencyRfm=[]
-            for i in range(len(centroid_rfm)):
-                data_uji = data_uji.clear()
-                data_uji = deepcopy(data_topsis_rfm)
-                alternative_test = []
-                for k, v in data_topsis_rfm.items():            
-                    data_uji[k].append(v[i])
-                
-                alternative_test = ['Cluster '+str(i+1) for i in range(len(centroid_rfm))]
-                alternative_test.append('Alternatif Cluster '+str(i+1))
-                    
-                c = Topsis(data=data_uji, benefit=benefit, cost=cost, alternative=alternative_test)        
-                print('Add alternatif ' + str(i))
-                print(c.preferensi())
-                matrix_rankConsistencyRfm.append(c.preferensi())
-
-                if top_pref_rfm == c.top_pref and low_pref_rfm == c.low_pref:
-                    consitency.append(1)
-                else:
-                    consitency.append(0)
-            print('Akurasi Rank Consistency : '+ str(sum(consitency)/len(consitency)*100)+'%')
-            accuracy_rankConsistencyRfm = sum(consitency)/len(consitency)*100
-            request.session['rc_rfm'] = accuracy_rankConsistencyRfm
-
-            #rank consistenct lrfm
-            data_uji = {}
-            consitency = []
-            matrix_rankConsistencyLrfm=[]
-            for i in range(len(centroid_lrfm)):
-                data_uji = data_uji.clear()
-                data_uji = deepcopy(data_topsis_lrfm)
-                alternative_test = []
-                for k, v in data_topsis_lrfm.items():            
-                    data_uji[k].append(v[i])
-                
-                alternative_test = ['Cluster '+str(i+1) for i in range(len(centroid_lrfm))]
-                alternative_test.append('Alternatif Cluster '+str(i+1))
-                    
-                c = Topsis(data=data_uji, benefit=benefit, cost=cost, alternative=alternative_test)        
-                print('Add alternatif ' + str(i))
-                print(c.preferensi())
-                matrix_rankConsistencyLrfm.append(c.preferensi())
-
-                if top_pref_lrfm == c.top_pref and low_pref_lrfm == c.low_pref:
-                    consitency.append(1)
-                else:
-                    consitency.append(0)
-            print('Akurasi Rank Consistency : '+ str(sum(consitency)/len(consitency)*100)+'%')
-            accuracy_rankConsistencyLrfm = sum(consitency)/len(consitency)*100
-            request.session['rc_lrfm'] = accuracy_rankConsistencyLrfm
-
-
             context['k_start'] = k_start
             context['data_sc_rfm'] = list(map(list, zip(*data_sc_rfm)))
             context['graph_sc_rfm'] = graph_sc_rfm
             context['centroid_rfm'] = centroid_rfm
-            context['preferensiRfm'] = preferensiRfm
-            context['matrix_rankConsistencyRfm'] = matrix_rankConsistencyRfm
-            context['accuracy_rankConsistencyRfm'] = accuracy_rankConsistencyRfm
-            context['validasi_rfm'] = validasi_rfm
 
             context['data_sc_lrfm'] = list(map(list, zip(*data_sc_lrfm)))
             context['graph_sc_lrfm'] = graph_sc_lrfm
-            context['centroid_lrfm'] = centroid_lrfm
-            context['preferensiLrfm'] = preferensiLrfm
-            context['matrix_rankConsistencyLrfm'] = matrix_rankConsistencyLrfm
-            context['accuracy_rankConsistencyLrfm'] = accuracy_rankConsistencyLrfm
-            context['validasi_lrfm'] = validasi_lrfm
-            
+            context['centroid_lrfm'] = centroid_lrfm            
 
         return render(request, 'clustering/testing/index.html', context)
     else:
@@ -348,5 +232,174 @@ def testing_volumedata(request):
             context['graph_vd'] = graph_vd
 
         return render(request, 'clustering/testing/testing_volumedata.html', context)
+    else:
+        return redirect('login')
+
+def testing_validasitopsis(request):
+    if request.session.has_key('user'):
+        currentuser = request.session['user']
+        context = {
+            'title': 'Skenario 3',
+            'isValidasiTopsis': True,
+            'session_data': False
+        }
+        centroid_rfm =  request.session['centroids_rfm'] if request.session.has_key('centroids_rfm') else False
+        centroid_lrfm = request.session['centroids_lrfm'] if request.session.has_key('centroids_lrfm') else False
+        context['session_data'] = True if centroid_rfm and centroid_lrfm else False
+        
+        if request.POST.get('running'):
+            if centroid_rfm and centroid_lrfm:
+                #topsis rfm
+                alternative_label = ['Cluster '+str(i+1) for i in range(len(centroid_rfm))]
+                label_topsis = ['r','f','m']
+                benefit = ['f', 'm']
+                cost = ['r']
+                data_topsis_rfm={}
+                for j in range(len(centroid_rfm[0])):
+                    temp=[]
+                    for i in range(len(centroid_rfm)):
+                        temp.append(centroid_rfm[i][j])
+                    data_topsis_rfm[label_topsis[j]] = temp
+                
+                request.session['data_topsis_rfm'] = data_topsis_rfm
+
+                t_rfm = Topsis(data=data_topsis_rfm, benefit=benefit, cost=cost,alternative=alternative_label)
+                preferensiRfm = t_rfm.preferensi()
+                request.session['preferensi_rfm'] = [[data[0], data[1], int(data[2])] for data in preferensiRfm]
+                print(preferensiRfm)
+
+                #validasi rfm
+                manual_rank_rfm = ['Cluster 2', 'Cluster 1']
+                validasi_rfm = validate_topsis(preferensiRfm, manual_rank_rfm)
+                request.session['validasi_rfm'] = validasi_rfm["accuracy"] 
+                print(validasi_rfm)
+
+                #topsis lrfm
+                alternative_label = ['Cluster '+str(i+1) for i in range(len(centroid_rfm))]
+                label_topsis = ['l','r','f','m']
+                benefit = ['f', 'm']
+                cost = ['l','r']
+                data_topsis_lrfm={}
+                for j in range(len(centroid_lrfm[0])):
+                    temp=[]
+                    for i in range(len(centroid_lrfm)):
+                        temp.append(centroid_lrfm[i][j])
+                    data_topsis_lrfm[label_topsis[j]] = temp
+                
+                request.session['data_topsis_lrfm'] = data_topsis_lrfm
+                t_lrfm = Topsis(data=data_topsis_lrfm, benefit=benefit, cost=cost,alternative=alternative_label)
+                preferensiLrfm = t_lrfm.preferensi()
+                request.session['preferensi_lrfm'] = [[data[0], data[1], int(data[2])] for data in preferensiLrfm]
+                print(preferensiLrfm)
+
+                #validasi rfm
+                manual_rank_lrfm = ['Cluster 2', 'Cluster 1']
+                validasi_lrfm = validate_topsis(preferensiLrfm, manual_rank_lrfm)
+                request.session['validasi_lrfm'] = validasi_lrfm["accuracy"]
+                print(validasi_lrfm)
+
+                context['centroid_rfm'] = centroid_rfm
+                context['centroid_lrfm'] = centroid_lrfm
+                context['preferensiRfm'] = preferensiRfm
+                context['preferensiLrfm'] = preferensiLrfm
+                context['validasi_rfm'] = validasi_rfm
+                context['validasi_lrfm'] = validasi_lrfm
+
+        return render(request, 'clustering/testing/testing_validasitopsis.html', context)
+    else:
+        return redirect('login')
+
+def testing_rankconsistency(request):
+    if request.session.has_key('user'):
+        currentuser = request.session['user']
+        context = {
+            'title': 'Skenario 4',
+            'isRankConsistency': True,
+            'session_data' :False
+        }
+
+        data_topsis_rfm =  request.session['data_topsis_rfm'] if request.session.has_key('data_topsis_rfm') else False
+        data_topsis_lrfm = request.session['data_topsis_lrfm'] if request.session.has_key('data_topsis_lrfm') else False
+        context['session_data'] = True if data_topsis_rfm and data_topsis_lrfm else False
+
+        if request.POST.get('running'):
+            if data_topsis_rfm and data_topsis_lrfm:
+                #rank consistency rfm
+                benefit = ['f', 'm']
+                cost = ['r']
+                len_centroid_rfm = len(data_topsis_rfm['r'])
+                label = ['Cluster '+str(i+1) for i in range(len_centroid_rfm)]
+                t_rfm = Topsis(data=data_topsis_rfm, benefit=benefit, cost=cost,alternative=label)
+                top_pref_rfm = t_rfm.top_pref
+                low_pref_rfm = t_rfm.low_pref
+
+                data_uji = {}
+                consitency = []
+                matrix_rankConsistencyRfm=[]
+                for i in range(len_centroid_rfm):
+                    data_uji = data_uji.clear()
+                    data_uji = deepcopy(data_topsis_rfm)
+                    alternative_test = []
+                    for k, v in data_topsis_rfm.items():            
+                        data_uji[k].append(v[i])
+                    
+                    alternative_test = ['Cluster '+str(i+1) for i in range(len_centroid_rfm)]
+                    alternative_test.append('Alternatif Cluster '+str(i+1))
+                        
+                    c = Topsis(data=data_uji, benefit=benefit, cost=cost, alternative=alternative_test)        
+                    print('Add alternatif ' + str(i))
+                    print(c.preferensi())
+                    matrix_rankConsistencyRfm.append(c.preferensi())
+
+                    if top_pref_rfm == c.top_pref and low_pref_rfm == c.low_pref:
+                        consitency.append(1)
+                    else:
+                        consitency.append(0)
+                print('Akurasi Rank Consistency : '+ str(sum(consitency)/len(consitency)*100)+'%')
+                accuracy_rankConsistencyRfm = sum(consitency)/len(consitency)*100
+                request.session['rc_rfm'] = accuracy_rankConsistencyRfm
+
+                #rank consistenct lrfm
+                benefit = ['f', 'm']
+                cost = ['l','r']
+                len_centroid_lrfm = len(data_topsis_rfm['r'])
+                label = ['Cluster '+str(i+1) for i in range(len_centroid_lrfm)]
+                t_lrfm = Topsis(data=data_topsis_lrfm, benefit=benefit, cost=cost,alternative=label)
+                top_pref_lrfm = t_lrfm.top_pref
+                low_pref_lrfm = t_lrfm.low_pref
+
+                data_uji = {}
+                consitency = []
+                matrix_rankConsistencyLrfm=[]
+                for i in range(len_centroid_lrfm):
+                    data_uji = data_uji.clear()
+                    data_uji = deepcopy(data_topsis_lrfm)
+                    alternative_test = []
+                    for k, v in data_topsis_lrfm.items():            
+                        data_uji[k].append(v[i])
+                    
+                    alternative_test = ['Cluster '+str(i+1) for i in range(len_centroid_lrfm)]
+                    alternative_test.append('Alternatif Cluster '+str(i+1))
+                        
+                    c = Topsis(data=data_uji, benefit=benefit, cost=cost, alternative=alternative_test)        
+                    print('Add alternatif ' + str(i))
+                    print(c.preferensi())
+                    matrix_rankConsistencyLrfm.append(c.preferensi())
+
+                    if top_pref_lrfm == c.top_pref and low_pref_lrfm == c.low_pref:
+                        consitency.append(1)
+                    else:
+                        consitency.append(0)
+                print('Akurasi Rank Consistency : '+ str(sum(consitency)/len(consitency)*100)+'%')
+                accuracy_rankConsistencyLrfm = sum(consitency)/len(consitency)*100
+                request.session['rc_lrfm'] = accuracy_rankConsistencyLrfm
+
+
+                context['matrix_rankConsistencyRfm'] = matrix_rankConsistencyRfm
+                context['accuracy_rankConsistencyRfm'] = accuracy_rankConsistencyRfm
+                context['matrix_rankConsistencyLrfm'] = matrix_rankConsistencyLrfm
+                context['accuracy_rankConsistencyLrfm'] = accuracy_rankConsistencyLrfm
+
+        return render(request, 'clustering/testing/testing_rankconsistency.html', context)
     else:
         return redirect('login')

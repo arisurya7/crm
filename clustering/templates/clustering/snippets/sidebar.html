@@ -54,16 +54,39 @@
           </a>
         </li>
         <li class="nav-item">
-          <a href="{%url 'clustering:testing-volumedata'%}" class="nav-link {% if isTestingVolumeData %} active {% endif %}">
+          <a href="#" class="nav-link">
             <i class="fas fa-cogs"></i>
-            <p>Pengujian Volume Data</p>
+            <p>
+              Pengujian dan Evaluasi
+              <i class="right fas fa-angle-left"></i>
+            </p>
           </a>
-        </li>
-        <li class="nav-item">
-          <a href="{%url 'clustering:testing'%}" class="nav-link {% if isTesting %} active {% endif %}">
-            <i class="fas fa-cogs"></i>
-            <p>Pengujian dan Evaluasi</p>
-          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="{%url 'clustering:testing-volumedata'%}" class="nav-link {% if isTestingVolumeData %} active {% endif %}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Skenario 1</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{%url 'clustering:testing'%}" class="nav-link {% if isTesting %} active {% endif %}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Skenario 2</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{%url 'clustering:testing-validasitopsis'%}" class="nav-link {% if isValidasiTopsis %} active {% endif %}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Skenario 3</p>
+              </a>
+            </li> 
+            <li class="nav-item">
+              <a href="{%url 'clustering:testing-rankconsistency'%}" class="nav-link {% if isRankConsistency %} active {% endif %}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Skenario 4</p>
+              </a>
+            </li>                     
+          </ul>
         </li>
         <li class="nav-item">
           <a href="{%url 'clustering:rekomendasi'%}" class="nav-link {% if isRekomendasi %} active {% endif %}">

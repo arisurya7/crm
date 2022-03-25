@@ -248,6 +248,7 @@ def clear_rekomendasi(request):
         del request.session['data_rfm']
         del request.session['validasi_rfm']
         del request.session['rc_rfm']
+        del request.session['data_topsis_rfm']
 
         del request.session['avg_score_lrfm']
         del request.session['clusters_lrfm']
@@ -258,6 +259,7 @@ def clear_rekomendasi(request):
         del request.session['data_lrfm']
         del request.session['validasi_lrfm']
         del request.session['rc_lrfm']
+        del request.session['data_topsis_lrfm']
     
         return redirect('clustering:rekomendasi')
     except:

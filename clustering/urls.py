@@ -19,6 +19,8 @@ urlpatterns = [
     #Testing
     path('testing/', views.testing, name="testing"),
     path('testing-volumedata/', views.testing_volumedata, name="testing-volumedata"),
+    path('testing-validasitopsis/', views.testing_validasitopsis, name="testing-validasitopsis"),
+    path('testing-rankconsistency/', views.testing_rankconsistency, name="testing-rankconsistency"),
     #Rekomendasi
     path('rekomendasi/', views.rekomendasi, name="rekomendasi"),
     #Clear Rekomendasi
