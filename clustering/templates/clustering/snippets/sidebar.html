@@ -54,6 +54,12 @@
           </a>
         </li>
         <li class="nav-item">
+          <a href="{%url 'clustering:testing-volumedata'%}" class="nav-link {% if isTestingVolumeData %} active {% endif %}">
+            <i class="fas fa-cogs"></i>
+            <p>Pengujian Volume Data</p>
+          </a>
+        </li>
+        <li class="nav-item">
           <a href="{%url 'clustering:testing'%}" class="nav-link {% if isTesting %} active {% endif %}">
             <i class="fas fa-cogs"></i>
             <p>Pengujian dan Evaluasi</p>

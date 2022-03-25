@@ -1,0 +1,113 @@
+{% extends 'clustering/base.html' %}
+{% load index %}
+{% load devide %}
+{% load get_item %}
+{% block content %}
+
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="container">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">{{ title }}</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">{{ title }}</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container">
+
+            <div class="row mt-3 ml-3">
+                <div class="col-md-6">
+                    <h3 class="mt-2 mb-3">Testing Volume Data</h3>
+                    <form action="{% url 'clustering:testing-volumedata'%}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="running" value="1">
+                        <button type="submit" class="btn btn-lg btn-primary mt-3">Start Test</button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="row mt-5 ml-3">
+                <div class="col">
+                    {% if si_volumedata_rfm %}
+                    <h1 class="mb-5">Hasil Pengujian</h1>
+                    <div class="card" style="border-radius: 1rem;">
+                        <div class="card-body">
+                            <div class="row">
+                                <h3 class="mt-5">Grafik Silhouette Coefficient</h3>
+                                <div class="col">
+                                    <div class="row">
+                                        <div class="col">
+                                            {% if graph_vd %}
+                                            <img src="data:image/png;base64, {{ graph_vd|safe }}"
+                                                class="mt-2 mx-auto d-block" alt="" style="width: 40rem;">
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="row mr-3 mt-5">
+                                        <h3 class="mt-5">Data Hasil Pengujian</h3>
+                                        <div class="col justify-content-center">
+                                            <table class="table table-hover table-bordered mt-2">
+                                                <thead>
+                                                    <tr>
+                                                        <th rowspan="2" class="align-middle text-center">Persentase Data
+                                                        </th>
+                                                        <th colspan="2" class="text-center">RFM</th>
+                                                        <th colspan="2" class="text-center">LRFM</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="text-center" cols=1>Konvergensi Jumlah k</th>
+                                                        <th class="text-center">SI</th>
+                                                        <th class="text-center">Konvergensi Jumlah k</th>
+                                                        <th class="text-center">SI</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for data in si_volumedata_lrfm  %}
+                                                    <tr>
+                                                        <td class="text-center">{{ data.volume }}%</td>
+                                                        <td class="text-center">
+                                                            {{ si_volumedata_rfm|index:forloop.counter0|get_item:"k"}}
+                                                        </td>
+                                                        <td class="text-center">
+                                                            {{ si_volumedata_rfm|index:forloop.counter0|get_item:"si"|floatformat:4}}
+                                                        </td>
+                                                        <td class="text-center">{{ data.k }}</td>
+                                                        <td class="text-center">{{ data.si|floatformat:4}}</td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+
+{% endblock content %}
+
+{% block customscript %}
+<script>
+
+</script>
+{% endblock customscript %}
