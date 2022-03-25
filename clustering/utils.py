@@ -1,6 +1,5 @@
-import builtins
-from turtle import color
 import matplotlib.pyplot as plt
+import numpy as np
 import base64
 from io import BytesIO
 from sklearn.decomposition import PCA
@@ -220,6 +219,24 @@ def pie_chart(data, labels, title="Pie Chart",title_legend="", legend_ket=[]):
    
     
     plt.legend(legend_ket, loc='best', title=title_legend, fontsize=8)
+    graph = get_graph()
+    return graph
+    
+def grouped_two_bar(x, y1, y2, x_label = "X Label", y_label = "Y Label", y1_label = "Y1", y2_label = "Y2", title = "Bar Chart"):
+    plt.switch_backend('AGG')
+    fig, ax = plt.subplots()
+
+    x_base = np.arange(len(x))
+    width = 0.35    
+    rects1 = ax.bar(x_base - width/2, y1, width, label=y1_label)
+    rects2 = ax.bar(x_base + width/2, y2, width, label=y2_label)
+
+    ax.set_ylabel(y_label)
+    ax.set_xlabel(x_label)
+    ax.set_title(title)
+    ax.set_xticks(x_base, x)
+    ax.legend()
+
     graph = get_graph()
     return graph
 

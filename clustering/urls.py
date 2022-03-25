@@ -18,6 +18,7 @@ urlpatterns = [
     path('lrfm/', views.lrfm, name="lrfm"),
     #Testing
     path('testing/', views.testing, name="testing"),
+    path('testing-volumedata/', views.testing_volumedata, name="testing-volumedata"),
     #Rekomendasi
     path('rekomendasi/', views.rekomendasi, name="rekomendasi"),
     #Clear Rekomendasi

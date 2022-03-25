@@ -1,3 +1,4 @@
+from multiprocessing import context
 from django.shortcuts import render, redirect
 from datetime import date,datetime
 from clustering.algorithm.kmeans import Kmeans
@@ -5,7 +6,7 @@ from clustering.algorithm.minmaxnorm import MinMaxNorm
 from clustering.algorithm.silhouette_coefficient import SilhouetteCoefficient
 from clustering.algorithm.topsis import Topsis
 from clustering.models import Customer, Order
-from clustering.utils import testing_sc_bar
+from clustering.utils import testing_sc_bar, grouped_two_bar
 from copy import deepcopy
 import numpy as np
 
@@ -260,3 +261,92 @@ def validate_topsis(preferensi, manual_rank):
         return {'result':validasi, 'accuracy':accuracy}
     else:
         return {'result':[], 'accuracy':None}
+
+def testing_volumedata(request):
+
+    if request.session.has_key('user'):
+        currentuser = request.session['user']
+        context = {
+            'title' : 'Pengujian Volume Data',
+            'isTestingVolumeData' : True
+        }
+
+        if request.POST.get('running'):
+            data_customers = Customer.objects.filter(id_company = currentuser['id_company']).values()
+            orders = Order.objects.filter(id_company = currentuser['id_company']).values()
+            data=[[],[],[],[]]
+            current_date = date(2022,1,1)
+            for d in data_customers:
+                length_date = d['last_active'].date()
+                for order in orders:
+                    if d['id_customer'] == order['id_customer']:
+                        if order['date'] < length_date:
+                            length_date = order['date']
+                
+                data[0].append(abs(length_date - d['last_active'].date()).days)
+                data[1].append(abs(d['last_active'].date() - current_date).days)
+                data[2].append(d['orders'])
+                data[3].append(d['total_spend'])
+        
+            #data rfm
+            data_rfm = data[1:]
+            #data rfm
+            data_lrfm = data.copy()
+
+            #split data
+            persen_data = [ int(round(len(data_customers)*(i/10),0)) for i in range(1,11)]
+            data_test_rfm = []
+            data_test_lrfm = []
+            for persen in persen_data:
+                data_test_rfm.append([data_rfm[0][:persen], data_rfm[1][:persen], data_rfm[2][:persen]])
+                data_test_lrfm.append([data_lrfm[0][:persen], data_lrfm[1][:persen], data_lrfm[2][:persen], data_lrfm[3][:persen]])
+            
+            #norm data
+            for i in range(len(persen_data)):
+                data_test_rfm[i] = MinMaxNorm(data_test_rfm[i]).calculate()
+                data_test_lrfm[i] = MinMaxNorm(data_test_lrfm[i]).calculate()
+
+            #pengujian volume data rfm
+            si_volumedata_rfm = [ {'volume':i*10, 'k':0, 'si':0} for i in range(1,len(data_test_rfm)+1)]
+            for i, datatest in enumerate(data_test_rfm):
+                max_si = 0
+                for j in range(2,7):
+                    km = Kmeans(data = datatest, k=j, max_iter=30).calculate()
+                    sc = SilhouetteCoefficient(km['clusters'], datatest)
+                    if max_si < sc.avg_score:
+                        max_si = sc.avg_score
+                        si_volumedata_rfm[i]['k'] = j
+                        si_volumedata_rfm[i]['si'] = sc.avg_score
+            print(si_volumedata_rfm)
+
+            #pengujian volume data lrfm
+            si_volumedata_lrfm = [ {'volume':i*10, 'k':0, 'si':0} for i in range(1,len(data_test_lrfm)+1)]
+            for i, datatest in enumerate(data_test_lrfm):
+                max_si = 0
+                for j in range(2,7):
+                    km = Kmeans(data = datatest, k=j, max_iter=30).calculate()
+                    sc = SilhouetteCoefficient(km['clusters'], datatest)
+                    if max_si < sc.avg_score:
+                        max_si = sc.avg_score
+                        si_volumedata_lrfm[i]['k'] = j
+                        si_volumedata_lrfm[i]['si'] = sc.avg_score
+            print(si_volumedata_lrfm)
+
+            #bar chart
+            x = [str(i*10)+"%" for i in range(1,11)]
+            y1=[]
+            y2=[]
+            for i in range(len(persen_data)):
+                y1.append(si_volumedata_rfm[i]['si'])
+                y2.append(si_volumedata_lrfm[i]['si'])
+
+            graph_vd = grouped_two_bar(x, y1, y2, "Persentase Data", "Score", "RFM", "LRFM", "Silhouette Coefficient Pada Variasi Volume Data")
+
+
+            context['si_volumedata_rfm'] = si_volumedata_rfm
+            context['si_volumedata_lrfm'] = si_volumedata_lrfm
+            context['graph_vd'] = graph_vd
+
+        return render(request, 'clustering/testing/testing_volumedata.html', context)
+    else:
+        return redirect('login')
