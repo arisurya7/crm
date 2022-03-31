@@ -75,6 +75,7 @@ def silhouette_bar(score_si, labels, title_sc = 'Silhouette plot for the various
     colors= ['red', 'green', 'blue', 'yellow', 'orange', 'black']
     plt.switch_backend('AGG')
     fig, ax = plt.subplots()
+    
     y_upper = y_lower = 0
     for i in range(max(labels)+1):
         cluster_sc = [score_si[k] for k, v in enumerate(labels) if v ==i]
@@ -88,7 +89,6 @@ def silhouette_bar(score_si, labels, title_sc = 'Silhouette plot for the various
         # Get the average silhouette score 
         avg_score = sum(score_si)/len(score_si)
         ax.axvline(avg_score,linestyle ='--', linewidth =2,color = 'green')
-        ax.set_yticks([])
         ax.set_xlim([-0.1, 1])
         ax.set_xlabel('Silhouette coefficient values')
         ax.set_ylabel('Cluster labels')

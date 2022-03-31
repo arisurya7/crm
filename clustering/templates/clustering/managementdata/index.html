@@ -39,10 +39,19 @@
                   </div>
                 </div>
               </form>
-              <button type="button" class="btn btn-outline-danger mb-5" data-bs-toggle="modal"
-                data-bs-target="#clearallcustomer">
-                Clear All Data Customer
-              </button>
+
+              <div class="row">
+                <div class="col">
+                  <button type="button" class="btn btn-outline-danger mb-5" data-bs-toggle="modal"
+                    data-bs-target="#clearallcustomer">
+                    Clear All Data Customer
+                  </button>
+                  <a href="{%url 'clustering:export-data-customer'%}" class="btn btn-success mb-5">Download</a>
+
+                </div>
+              </div>
+
+
               {% endif %}
 
               <table class="table table-sm" id="table-customers">
@@ -100,10 +109,17 @@
                   </div>
                 </div>
               </form>
-              <button type="button" class="btn btn-outline-danger mb-5" data-bs-toggle="modal"
-                data-bs-target="#clearallorder">
-                Clear All Data Order
-              </button>
+              <div class="row">
+                <div class="col">
+                  <button type="button" class="btn btn-outline-danger mb-5" data-bs-toggle="modal"
+                    data-bs-target="#clearallorder">
+                    Clear All Data Order
+                  </button>
+                  <a href="{%url 'clustering:export-data-order'%}" class="btn btn-success mb-5">Dowload Data Order</a>
+
+                </div>
+              </div>
+
               {% endif %}
 
               <table class="table mt-3" id="table-orders">

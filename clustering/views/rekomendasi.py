@@ -147,10 +147,10 @@ def rekomendasi(request):
             characteristic_graph = []
             for i in range(max(clusters)+1):
                 month_labels = [(datetime.strptime(str(month),"%m")).strftime("%b") for month in month_sort[i]] 
-                country_bar = pie_chart(countries[i].values(), countries[i].keys(), "Pelanggan Berdasarkan Kenegaraan", "Kenegaraan", ['dalam negeri', 'luar negeri'])
+                country_bar = pie_chart(countries[i].values(), countries[i].keys(), "Pelanggan Berdasarkan Negara", "Kenegaraan", ['dalam negeri', 'luar negeri'])
                 regions_bar = persentage_horizontal_bar(list(regions_sort[i].values()), list(regions_sort[i].keys()), x_label='Persentase Jumlah Pelanggan Pada Cluster', y_label='Region', title='Pelanggan Berdasarkan Region')
                 month_bar = persentage_horizontal_bar(list(month_sort[i].values()), month_labels, x_label="Persentase Jumlah Pelanggan Pada Cluster", y_label="Bulan", title="Order Berdasarkan Bulan")
-                month_category_bar = pie_chart(month_category[i].values(), month_category[i].keys(), "Order Berdasarkan Kategori Bulan", "Tanggal", ['1-7', '8-22','>=23'])
+                month_category_bar = pie_chart(month_category[i].values(), month_category[i].keys(), "Order Berdasarkan Tanggal", "Tanggal", ['1-7', '8-22','>=23'])
                 bar_hours = hours_bar(hours_sort[i].keys(), hours_sort[i].values())
                 category_time_bar = pie_chart(category_time[i].values(), category_time[i].keys(), "Transaksi Berdasarkan Kategori Waktu", "Jam", ['5.00 - 10.59', '11.00-14.59','15.00-18.59', '17.00-23.59', '00.00-4.59'])
                 characteristic_graph.append([regions_bar, country_bar, month_bar, month_category_bar, bar_hours, category_time_bar])
@@ -175,13 +175,15 @@ def rekomendasi(request):
                         f_temp = []
                         m_temp = []
                         for j in range(len(clusters)):
-                            row_data = {'name':'','email':'','last_active':0, 'order':0, 'total_spend':0, 'cluster':i+1}
+                            row_data = {'name':'','email':'','last_active':0, 'order':0, 'total_spend':0, 'region':'', 'country':'', 'cluster':i+1}
                             if i == clusters[j]:
                                 row_data['name'] = data_customers[j]['name']
                                 row_data['email'] = data_customers[j]['email']
                                 row_data['last_active'] = data_customers[j]['last_active']
                                 row_data['order'] = data_customers[j]['orders']
                                 row_data['total_spend'] = data_customers[j]['total_spend']
+                                row_data['region'] = data_customers[j]['region']
+                                row_data['country'] = data_customers[j]['country']
                                 
                                 actual_cluster_member[i].append(row_data)
                                 r_temp.append(data_rfm[j][0])
@@ -206,13 +208,15 @@ def rekomendasi(request):
                         f_temp = []
                         m_temp = []
                         for j in range(len(clusters)):
-                            row_data = {'name':'','email':'','last_active':0, 'order':0, 'total_spend':0, 'cluster':i+1}
+                            row_data = {'name':'','email':'','last_active':0, 'order':0, 'total_spend':0,'region':'', 'country':'', 'cluster':i+1}
                             if i == clusters[j]:
                                 row_data['name'] = data_customers[j]['name']
                                 row_data['email'] = data_customers[j]['email']
                                 row_data['last_active'] = data_customers[j]['last_active']
                                 row_data['order'] = data_customers[j]['orders']
                                 row_data['total_spend'] = data_customers[j]['total_spend']
+                                row_data['region'] = data_customers[j]['region']
+                                row_data['country'] = data_customers[j]['country']
                                 actual_cluster_member[i].append(row_data)
                                 l_temp.append(data_lrfm[j][0])
                                 r_temp.append(data_lrfm[j][1])

@@ -9,6 +9,8 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name="dashboard"),
     #Management Data
     path('managementdata/', views.managementdata, name="managementdata"),
+    path('managementdata/export-data-customer', views.export_data_customer, name="export-data-customer"),
+    path('managementdata/export-data-order', views.export_data_order, name="export-data-order"),
     path('managementdata/update-cluster', views.update_cluster, name="update-cluster"),
     path('managementdata/delete-all-customer', views.delete_all_customer, name="delete-all-customer"),
     path('managementdata/delete-all-order', views.delete_all_order, name="delete-all-order"),

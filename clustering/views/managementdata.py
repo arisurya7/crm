@@ -1,6 +1,7 @@
 import string
+import csv
 from django.shortcuts import redirect, render
-from django.http.response import JsonResponse
+from django.http.response import JsonResponse, HttpResponse
 from clustering.models import Customer, Order
 from clustering.resources import CustomerResources, OrderResources
 from django.contrib import messages
@@ -91,6 +92,45 @@ def managementdata(request):
 
     else:
         return redirect('login')
+
+def export_data_customer(request):
+    if request.session.has_key("user"):
+        currentuser = request.session['user']
+        data_customers = Customer.objects.filter(id_company = currentuser['id_company']).values()
+        response = HttpResponse(
+            content_type='text/csv',
+            headers={'Content-Disposition': 'attachment; filename="data_customer.csv"'},
+            )
+
+        writer = csv.writer(response)
+        writer.writerow(['id_customer', 'name', 'last_active', 'email', 'orders', 'total_spend', 'aov', 'country', 'city', 'region', 'cluster'])
+        
+        for d in data_customers:
+             writer.writerow([d['id_customer'], d['name'], d['last_active'], d['email'], d['orders'], d['total_spend'], d['aov'], d['country'], d['city'], d['region'], d['cluster']])
+        return response
+    
+    else:
+        return redirect('login')
+
+def export_data_order(request):
+    if request.session.has_key("user"):
+        currentuser = request.session['user']
+        data_orders = Order.objects.filter(id_company = currentuser['id_company']).values()
+        response = HttpResponse(
+            content_type='text/csv',
+            headers={'Content-Disposition': 'attachment; filename="data_order.csv"'},
+            )
+
+        writer = csv.writer(response)
+        writer.writerow(['id_order','id_customer', 'name', 'date', 'status', 'total'])
+        
+        for d in data_orders:
+             writer.writerow([d['id_order'], d['id_customer'], d['name'], d['date'], d['status'], d['total']])
+        return response
+    
+    else:
+        return redirect('login')
+    
 
     
 

@@ -47,6 +47,7 @@ def testing(request):
             request.session['data_lrfm'] = list(map(list, zip(*data)))
             
             #normalization
+            # d = [data[0][:585], data[1][:585], data[2][:585], data[3][:585]]
             data_norm = MinMaxNorm(data).calculate()
             #data rfm
             data_rfm = data_norm[1:]
@@ -151,7 +152,7 @@ def testing_volumedata(request):
     if request.session.has_key('user'):
         currentuser = request.session['user']
         context = {
-            'title' : 'Pengujian Volume Data',
+            'title' : 'Skenario 1',
             'isTestingVolumeData' : True
         }
 
@@ -189,6 +190,15 @@ def testing_volumedata(request):
             for i in range(len(persen_data)):
                 data_test_rfm[i] = MinMaxNorm(data_test_rfm[i]).calculate()
                 data_test_lrfm[i] = MinMaxNorm(data_test_lrfm[i]).calculate()
+            
+            # #weight data
+            # for i in range(len(persen_data)):
+            #     w_rfm3 = [0.0594, 0.4507, 0.4899]
+            #     data_test_rfm[i] = [list(data*w_rfm3[j]) for j, data in enumerate(np.array(data_test_rfm[i]))]
+            #     w_lrfm3 = [0.0405, 0.0747, 0.3155, 0.5691]
+            #     data_test_lrfm[i] = [list(data*w_lrfm3[j]) for j, data in enumerate(np.array(data_test_lrfm[i]))]
+                # data_test_rfm[i] = MinMaxNorm(data_test_rfm[i]).calculate()
+                # data_test_lrfm[i] = MinMaxNorm(data_test_lrfm[i]).calculate()
 
             #pengujian volume data rfm
             si_volumedata_rfm = [ {'volume':i*10, 'k':0, 'si':0} for i in range(1,len(data_test_rfm)+1)]

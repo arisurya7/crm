@@ -318,7 +318,7 @@
                       {% if actual_cluster %}
                       <div class="row mt-4">
                         <div class="col-md-12">
-                          <h4 class="mt-3 mb-3 fw-bold">Nilai Aktual RFM</h4>
+                          <h4 class="mt-3 mb-3 fw-bold">Nilai Aktual LRFM</h4>
                           <table class="table table-bordered table-hover">
                             <thead>
                               <tr>
@@ -373,6 +373,8 @@
                         <th>Last Active</th>
                         <th>Order</th>
                         <th>Total Spend</th>
+                        <th>Region</th>
+                        <th>Country</th>
                         <th>Cluster</th>
                       </tr>
                     </thead>
@@ -385,6 +387,8 @@
                         <td>{{ data.last_active }}</td>
                         <td>{{ data.order }}</td>
                         <td>{{ data.total_spend }}</td>
+                        <td>{{ data.region }}</td>
+                        <td>{{ data.country }}</td>
                         <td>{{ data.cluster }}</td>
                       </tr>
                       {% endfor %}

@@ -65,8 +65,7 @@ def rfm(request):
                 cluster_visualization.append(scatter)
                 silhoutte = silhouette_bar(score_si=sc.score_si, labels=km['clusters'])
                 silhouette_visualization.append(silhoutte)
-                temp_si_avg = [sc.avg_score, checkSilhouetteStructure(sc.avg_score)]
-                si_avg.append(temp_si_avg)
+                si_avg.append([sc.avg_score, checkSilhouetteStructure(sc.avg_score)])
                 
                 member = []
                 si_cluster = []
