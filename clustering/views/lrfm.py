@@ -28,6 +28,9 @@ def lrfm(request):
                 k_start = int(request.POST.get('k_start'))
             if request.POST.get('k_end'):
                 k_end = int( request.POST.get('k_end'))
+            else:
+                k_end = int(request.POST.get('k_start'))
+
             
             data_customers = Customer.objects.filter(id_company = currentuser['id_company']).values()
             orders = Order.objects.filter(id_company = currentuser['id_company']).values()
@@ -123,7 +126,7 @@ def lrfm(request):
                 print('Silhouette Coefficient jumlah k cluster '+str(i)+ ' : ' + str(sc.avg_score))
 
             # silhouette plot 
-            silhouette_line_plot = silhouette_plot(x=[k_start+i for i in range(len(si_avg))], y=[round(data[0],3) for data in si_avg])
+            silhouette_line_plot = silhouette_plot(x=[k_start+i for i in range(len(si_avg))], y=[round(data[0],4) for data in si_avg])
 
             # topsis
             label_topsis = ['l','r','f','m']
@@ -170,10 +173,17 @@ def lrfm(request):
                 print('Add alternatif ' + str(i))
                 print(data_uji)
                 print(c.preferensi())
-                matrix_rankConsistency.append(c.preferensi())
+                rc_pref = c.preferensi()
+                value_lf = [[value[0], value[1], value[2], i] for i, value in enumerate(rc_pref) if c.low_pref == value[0]][0]
+                matrix_rankConsistency.append([ list(c) for c in rc_pref])
 
                 if top_pref == c.top_pref and low_pref == c.low_pref:
                     consitency.append(1)
+                    for k, pref in enumerate(rc_pref):
+                        if pref[1]==value_lf[1] and pref[2] > value_lf[2]:
+                            #swap
+                            matrix_rankConsistency[i][k][2] = matrix_rankConsistency[i][value_lf[-1]][2]
+                            matrix_rankConsistency[i][value_lf[-1]][2] = pref[2]
                 else:
                     consitency.append(0)
             print('Akurasi Rank Consistency : '+ str(sum(consitency)/len(consitency)*100)+'%')

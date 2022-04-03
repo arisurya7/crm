@@ -26,14 +26,14 @@
 
       <div class="row mt-3 ml-3">
         <div class="col-md-6">
-          <h5 class="mt-2 mb-3">Pengujian Silhouette Coefficient Berdasarkan Data Bobot</h5>
-          <form action="{% url 'clustering:testing'%}" method="post">
+          <h5 class="mt-2 mb-3">Pengujian Silhouette Coefficient Berdasarkan Pembobotan Model Data</h5>
+          <form action="{% url 'clustering:testing'%}" method="post" id="proccessform">
             {% csrf_token %}
             <div class="row">
               <div class="col-md-10">
                 <label for="k_start">Rentang Awal k Cluster</label>
-                <select class="form-select mb-2" aria-label="Default select example" name="k_start" id="k_start"
-                  required>
+                <select class="form-select select2 mb-2 " aria-label="Default select example" name="k_start"
+                  id="k_start" required>
                   <option value="" selected>Pilih k Cluster</option>
                   <option value="2">2</option>
                   <option value="3">3</option>
@@ -42,15 +42,11 @@
                   <option value="6">6</option>
                 </select>
                 <label for="k_end">Rentang Akhir k Cluster</label>
-                <select class="form-select" aria-label="Default select example" name="k_end" id="k_end" required>
+                <select class="form-select select2" aria-label="Default select example" name="k_end" id="k_end"
+                  required>
                   <option value="" selected>Pilih k Cluster</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                  <option value="6">6</option>
                 </select>
-                <button type="submit" class="btn btn-primary mt-3">Start</button>
+                <button type="submit" class="btn btn-primary mt-3" id="btnProccess">Start Test</button>
               </div>
             </div>
           </form>
@@ -193,5 +189,39 @@
 
 {% block customscript %}
 <script>
+  $(document).ready(function () {
+    $("#btnProccess").click(function () {
+      // disable button
+      $(this).prop("disabled", true);
+      // add spinner to button
+      $(this).html(
+        `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing ...`
+      );
+      $("#proccessform").submit()
+    });
+  });
+
+  $(document).ready(function () {
+    $("#k_start").select2();
+  });
+
+  $(document).ready(function () {
+    $("#k_end").select2();
+  });
+
+
+  $('#k_start').on('select2:select', function (e) {
+    $('#k_end').empty()
+    let opt = new Option('Pilih k Cluster', '', false, false)
+    $('#k_end').append(opt).trigger('change')
+    var k_start = $(this).val()
+    k_start = parseInt(k_start)
+    console.log(k_start)
+    for (let i = k_start + 1; i <= 6; i++) {
+      opt = new Option(i, i, false, false)
+      $('#k_end').append(opt)
+    }
+
+  })
 </script>
 {% endblock customscript %}

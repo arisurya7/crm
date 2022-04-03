@@ -42,18 +42,18 @@ class Topsis:
         return distanceAlter
     
     def calculate_rank(self,vector):
-        a={}
-        rank=1
-        for num in sorted(vector, reverse=True):
-            if num not in a:
-                a[num]=rank
-                rank=rank+1
-        return[a[i] for i in vector]
-        # array = np.array(vector)
-        # sorted_indices = np.argsort(-array)
-        # ranks = np.empty_like(sorted_indices)
-        # ranks[sorted_indices] = np.arange(len(array))
-        # return list(ranks+1)
+        # a={}
+        # rank=1
+        # for num in sorted(vector, reverse=True):
+        #     if num not in a:
+        #         a[num]=rank
+        #         rank=rank+1
+        # return[a[i] for i in vector]
+        array = np.array(vector)
+        sorted_indices = np.argsort(-array)
+        ranks = np.empty_like(sorted_indices)
+        ranks[sorted_indices] = np.arange(len(array))
+        return list(ranks+1)
     
     def preferensi(self):
         da = self.distanceAlternative()

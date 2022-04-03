@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from datetime import date,datetime
+from datetime import date,datetime 
 from clustering.algorithm.kmeans import Kmeans
 from clustering.algorithm.minmaxnorm import MinMaxNorm
 from clustering.algorithm.silhouette_coefficient import SilhouetteCoefficient
@@ -23,6 +23,9 @@ def testing(request):
                 k_start = int(request.POST.get('k_start'))
             if request.POST.get('k_end'):
                 k_end = int( request.POST.get('k_end'))
+            else:
+                k_end = int(request.POST.get('k_start'))
+
 
             x_base = [i for i in range(k_start,k_end+1)]
 
@@ -359,10 +362,17 @@ def testing_rankconsistency(request):
                     c = Topsis(data=data_uji, benefit=benefit, cost=cost, alternative=alternative_test)        
                     print('Add alternatif ' + str(i))
                     print(c.preferensi())
-                    matrix_rankConsistencyRfm.append(c.preferensi())
+                    rc_pref = c.preferensi()
+                    low_value_rfm = [[value[0], value[1], value[2], i] for i, value in enumerate(rc_pref) if c.low_pref == value[0]][0]
+                    matrix_rankConsistencyRfm.append([ list(c) for c in rc_pref])
 
                     if top_pref_rfm == c.top_pref and low_pref_rfm == c.low_pref:
                         consitency.append(1)
+                        for k, pref in enumerate(rc_pref):
+                            if pref[1]==low_value_rfm[1] and pref[2] > low_value_rfm[2]:
+                                #swap
+                                matrix_rankConsistencyRfm[i][k][2] = matrix_rankConsistencyRfm[i][low_value_rfm[-1]][2]
+                                matrix_rankConsistencyRfm[i][low_value_rfm[-1]][2] = pref[2]
                     else:
                         consitency.append(0)
                 print('Akurasi Rank Consistency : '+ str(sum(consitency)/len(consitency)*100)+'%')
@@ -394,10 +404,16 @@ def testing_rankconsistency(request):
                     c = Topsis(data=data_uji, benefit=benefit, cost=cost, alternative=alternative_test)        
                     print('Add alternatif ' + str(i))
                     print(c.preferensi())
-                    matrix_rankConsistencyLrfm.append(c.preferensi())
+                    low_value_lrfm = [[value[0], value[1], value[2], i] for i, value in enumerate(rc_pref) if c.low_pref == value[0]][0]
+                    matrix_rankConsistencyLrfm.append([ list(c) for c in rc_pref])
 
                     if top_pref_lrfm == c.top_pref and low_pref_lrfm == c.low_pref:
                         consitency.append(1)
+                        for k, pref in enumerate(rc_pref):
+                            if pref[1]==low_value_lrfm[1] and pref[2] > low_value_lrfm[2]:
+                                #swap
+                                matrix_rankConsistencyLrfm[i][k][2] = matrix_rankConsistencyLrfm[i][low_value_lrfm[-1]][2]
+                                matrix_rankConsistencyLrfm[i][low_value_lrfm[-1]][2] = pref[2]
                     else:
                         consitency.append(0)
                 print('Akurasi Rank Consistency : '+ str(sum(consitency)/len(consitency)*100)+'%')

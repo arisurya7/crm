@@ -26,7 +26,7 @@
       <div class="row mt-3 ml-3">
         <div class="col-md-6">
           <h5 class="mt-2 mb-3">Clustering</h5>
-          <form action="{% url 'clustering:rfm'%}" method="post">
+          <form action="{% url 'clustering:rfm'%}" method="post" id="proccessform">
             {% csrf_token %}
             <div class="row">
               <div class="col-md-10">
@@ -45,7 +45,7 @@
                 <select class="form-control select2" aria-label="Default select example" name="k_end" id="k_end">
                   <option value="" selected>Pilih k Cluster</option>
                 </select>
-                <button type="submit" class="btn btn-primary mt-3">Start</button>
+                <button type="submit" class="btn btn-primary mt-3" id="btnProccess">Start</button>
               </div>
             </div>
           </form>
@@ -772,6 +772,18 @@
     }
 
   })
+
+  $(document).ready(function () {
+    $("#btnProccess").click(function () {
+      // disable button
+      $(this).prop("disabled", true);
+      // add spinner to button
+      $(this).html(
+        `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing ...`
+      );
+      $("#proccessform").submit()
+    });
+  });
 
 </script>
 {% endblock customscript %}

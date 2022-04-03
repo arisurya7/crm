@@ -24,11 +24,11 @@
   <section class="content">
     <div class="container">
 
-      <div class="row mt-3 ml-3">
+      <!-- <div class="row mt-3 ml-3">
         <div class="col-md-6">
           <a href="{%url 'clustering:clear-rekomendasi'%}" class="btn btn-warning">Clear Rekomendasi Cluster</a>
         </div>
-      </div>
+      </div> -->
 
       <div class="row mt-5 ml-3">
         <h1 class="mb-3">Visualisasi Hasil Clustering</h1>
@@ -458,6 +458,12 @@
                 </div>
               </div>
               {% endfor %}
+
+              <div class="row mt-3 ml-3">
+                <div class="col-md-6">
+                  <a href="{%url 'clustering:clear-rekomendasi'%}" class="btn btn-warning">Clear Rekomendasi Cluster</a>
+                </div>
+              </div>
 
 
             </div>

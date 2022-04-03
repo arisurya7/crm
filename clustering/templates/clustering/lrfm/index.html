@@ -25,7 +25,7 @@
       <div class="row mt-3 ml-1">
         <div class="col-md-6">
           <h1 class="mt-2 mb-3">Clustering</h1>
-          <form action="{% url 'clustering:lrfm'%}" method="post">
+          <form action="{% url 'clustering:lrfm'%}" method="post" id="proccessform">
             {% csrf_token %}
             <div class="row">
               <div class="col-md-10">
@@ -41,10 +41,10 @@
                 </select>
                 <label for="k_end">Rentang Akhir k Cluster</label>
                 <select class="form-control select2" aria-label="Default select example" name="k_end" id="k_end"
-                  required>
+                  >
                   <option value="" selected>Pilih k Cluster</option>
                 </select>
-                <button type="submit" class="btn btn-primary mt-3">Start</button>
+                <button type="submit" class="btn btn-primary mt-3" id="btnProccess">Start</button>
               </div>
             </div>
           </form>
@@ -384,7 +384,7 @@
                   <tr>
                     <td>Cluster {{ forloop.counter }}</td>
                     <td>{{ data.1 |floatformat:5 }}</td>
-                    <td>{{ data.2 |floatformat:5 }}</td>
+                    <td>{{ data.2 }}</td>
                   </tr>
 
                   {% endfor %}
@@ -415,7 +415,7 @@
                   <tr>
                     <td>{{ data.0 }}</td>
                     <td>{{ data.1 |floatformat:5 }}</td>
-                    <td>{{ data.2 |floatformat:5 }}</td>
+                    <td>{{ data.2  }}</td>
                   </tr>
                   {% endfor %}
                 </tbody>
@@ -788,5 +788,17 @@
     }
 
   })
+
+  $(document).ready(function () {
+    $("#btnProccess").click(function () {
+      // disable button
+      $(this).prop("disabled", true);
+      // add spinner to button
+      $(this).html(
+        `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing ...`
+      );
+      $("#proccessform").submit()
+    });
+  });
 </script>
 {% endblock customscript %}
