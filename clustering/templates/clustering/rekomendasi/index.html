@@ -181,7 +181,11 @@
                         Model Atribut Data Terbaik : {{ best_model }} <br>
                         Jumlah k Cluster Terbaik : {{ best_k }} <br>
                         Score Silhouette Coefficient : {{ best_si.0|floatformat:4 }} ({{ best_si.1 }}) <br>
-                        Validasi Perhitungan TOPSIS : {{ validasi_topsis }}% <br>
+                        
+                        {% if validasi_topsis %}
+                        Validasi Perhitungan TOPSIS : {{ validasi_topsis }}% <br>                          
+                        {% endif %}                          
+                        
                         Rank Consistency : {{ accuracy_rank_consistency }}%
                       </p>
                     </div>

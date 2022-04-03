@@ -18,117 +18,141 @@ def testing(request):
             'isTesting' : True
         }
 
-        if request.POST.get('k_start') or request.POST.get('k_end'):
-            if request.POST.get('k_start'):
-                k_start = int(request.POST.get('k_start'))
-            if request.POST.get('k_end'):
-                k_end = int( request.POST.get('k_end'))
-            else:
-                k_end = int(request.POST.get('k_start'))
+        x_base = [i for i in range(2,7)]
 
-
-            x_base = [i for i in range(k_start,k_end+1)]
-
-            data_customers = Customer.objects.filter(id_company = currentuser['id_company']).values()
-            orders = Order.objects.filter(id_company = currentuser['id_company']).values()
-            data=[[],[],[],[]]
-            current_date = date(2022,1,1)
-            for d in data_customers:
-                length_date = d['last_active'].date()
-                for order in orders:
-                    if d['id_customer'] == order['id_customer']:
-                        if order['date'] < length_date:
-                            length_date = order['date']
+        if request.POST.get('running'):
+            if request.session.has_key('data_sc_rfm') and request.session.has_key('data_sc_lrfm'):
                 
-                data[0].append(abs(length_date - d['last_active'].date()).days)
-                data[1].append(abs(d['last_active'].date() - current_date).days)
-                data[2].append(d['orders'])
-                data[3].append(d['total_spend'])
-            
-            #session data
-            request.session['data_rfm'] = list(map(list, zip(*data[1:])))
-            request.session['data_lrfm'] = list(map(list, zip(*data)))
-            
-            #normalization
-            # d = [data[0][:585], data[1][:585], data[2][:585], data[3][:585]]
-            data_norm = MinMaxNorm(data).calculate()
-            #data rfm
-            data_rfm = data_norm[1:]
-            #data rfm
-            data_lrfm = data_norm.copy()
-            
-            #pembobotan rfm
-            w_rfm1 = [0.0975, 0.3446, 0.5583]
-            data_rfm1 = [list(data*w_rfm1[i]) for i, data in enumerate(np.array(data_rfm))]
-            w_rfm2 = [0.059, 0.280, 0.670]
-            data_rfm2 = [list(data*w_rfm2[i]) for i, data in enumerate(np.array(data_rfm))]
-            w_rfm3 = [0.0594, 0.4507, 0.4899]
-            data_rfm3 = [list(data*w_rfm3[i]) for i, data in enumerate(np.array(data_rfm))]
+                graph_sc_rfm = testing_sc_bar(x_base, request.session['data_sc_rfm'], "Silhouette Coeffiennt RFM")
+                graph_sc_lrfm = testing_sc_bar(x_base, request.session['data_sc_lrfm'], "Silhouette Coeffiennt LRFM")
+                print('session')
+                context['k_start'] = 2
+                context['data_sc_rfm'] = list(map(list, zip(*request.session['data_sc_rfm'])))
+                context['graph_sc_rfm'] = graph_sc_rfm
+                context['centroid_rfm'] = request.session['centroids_rfm']
 
-            #pembobotan lrfm
-            w_lrfm1 = [0.238, 0.088, 0.326, 0.348]
-            data_lrfm1 = [list(data*w_lrfm1[i]) for i, data in enumerate(np.array(data_lrfm))]
-            w_lrfm2 = [0.222, 0.182, 0.305, 0.292]
-            data_lrfm2 = [list(data*w_lrfm2[i]) for i, data in enumerate(np.array(data_lrfm))]
-            w_lrfm3 = [0.0405, 0.0747, 0.3155, 0.5691]
-            data_lrfm3 = [list(data*w_lrfm3[i]) for i, data in enumerate(np.array(data_lrfm))]
+                context['data_sc_lrfm'] = list(map(list, zip(*request.session['data_sc_lrfm'])))
+                context['graph_sc_lrfm'] = graph_sc_lrfm
+                context['centroid_lrfm'] = request.session['centroids_lrfm']
 
-            #silhouette coefficient rfm
-            data_sc_rfm = [[], [], [],[]]
-            max_sc_rfm = 0
-            centroid_rfm = []
-            mix_data_rfm = [data_rfm1, data_rfm2, data_rfm3, data_rfm]
-            for i, datatest in enumerate(mix_data_rfm):
-                for j in range(k_start,k_end+1):
-                    km = Kmeans(data = datatest, k=j, max_iter=30).calculate()
-                    sc = SilhouetteCoefficient(km['clusters'], datatest)
-                    data_sc_rfm[i].append(sc.avg_score)
-                    if sc.avg_score > max_sc_rfm:
-                        centroid_rfm = km['centroids']
-                        max_sc_rfm = sc.avg_score
-                        request.session['avg_score_rfm'] = sc.avg_score
-                        request.session['clusters_rfm'] = km['clusters']
-                        request.session['centroids_rfm'] = km['centroids']
-                        request.session['data_weight_rfm'] = mix_data_rfm[i]
-                        request.session['score_si_rfm'] = sc.score_si
+            else:
+                print('load')
 
-            
-            graph_sc_rfm = testing_sc_bar(x_base, data_sc_rfm, "Silhouette Coeffiennt RFM")
-            print(data_sc_rfm)
-            print(centroid_rfm)
+                if request.session.has_key('data_rfm') and request.session.has_key('data_lrfm'):
+                    #data rfm
+                    data = list(map(list, zip(*request.session['data_lrfm'])))
+                    data_norm = MinMaxNorm(data).calculate()
+                    data_rfm = data_norm[1:]
+                    #data rfm
+                    data_lrfm = data_norm.copy()
+                    print(len(data_rfm))
+                    print(len(data_rfm[0]))
+                else:
+                    print('load db')
 
-            # silhouette coefficient lrfm
-            data_sc_lrfm = [[], [], [], []]
-            max_sc_lrfm = 0
-            centroid_lrfm = []
-            mix_data_lrfm = [data_lrfm1, data_lrfm2, data_lrfm3, data_lrfm]
-            for i, datatest in enumerate(mix_data_lrfm):
-                for j in range(k_start,k_end+1):
-                    km = Kmeans(data = datatest, k=j, max_iter=30).calculate()
-                    sc = SilhouetteCoefficient(km['clusters'], datatest)
-                    data_sc_lrfm[i].append(sc.avg_score)
-                    if sc.avg_score > max_sc_lrfm:
-                        centroid_lrfm = km['centroids']
-                        max_sc_lrfm = sc.avg_score
-                        request.session['avg_score_lrfm'] = sc.avg_score
-                        request.session['clusters_lrfm'] = km['clusters']
-                        request.session['centroids_lrfm'] = km['centroids']
-                        request.session['data_weight_lrfm'] = mix_data_lrfm[i]
-                        request.session['score_si_lrfm'] = sc.score_si
+                    data_customers = Customer.objects.filter(id_company = currentuser['id_company']).values()
+                    orders = Order.objects.filter(id_company = currentuser['id_company']).values()
+                    
+                    if len(data_customers)>0 and len(orders)>0:
+                        data=[[],[],[],[]]
+                        current_date = date(2022,1,1)
+                        for d in data_customers:
+                            length_date = d['last_active'].date()
+                            for order in orders:
+                                if d['id_customer'] == order['id_customer']:
+                                    if order['date'] < length_date:
+                                        length_date = order['date']
+                            
+                            data[0].append(abs(length_date - d['last_active'].date()).days)
+                            data[1].append(abs(d['last_active'].date() - current_date).days)
+                            data[2].append(d['orders'])
+                            data[3].append(d['total_spend'])
                         
-            
-            graph_sc_lrfm = testing_sc_bar(x_base, data_sc_lrfm, "Silhouette Coeffiennt LRFM")
-            print(data_sc_lrfm)
-            print(centroid_lrfm)
+                        #session data
+                        request.session['data_rfm'] = list(map(list, zip(*data[1:])))
+                        request.session['data_lrfm'] = list(map(list, zip(*data)))
+                        
+                        #normalization
+                        data_norm = MinMaxNorm(data).calculate()
+                        #data rfm
+                        data_rfm = data_norm[1:]
+                        #data rfm
+                        data_lrfm = data_norm.copy()
+                    else:
+                        return render (request, 'clustering/testing/index.html', context)
+                
+                #pembobotan rfm
+                w_rfm1 = [0.0975, 0.3446, 0.5583]
+                data_rfm1 = [list(data*w_rfm1[i]) for i, data in enumerate(np.array(data_rfm))]
+                w_rfm2 = [0.059, 0.280, 0.670]
+                data_rfm2 = [list(data*w_rfm2[i]) for i, data in enumerate(np.array(data_rfm))]
+                w_rfm3 = [0.0594, 0.4507, 0.4899]
+                data_rfm3 = [list(data*w_rfm3[i]) for i, data in enumerate(np.array(data_rfm))]
 
-            context['k_start'] = k_start
-            context['data_sc_rfm'] = list(map(list, zip(*data_sc_rfm)))
-            context['graph_sc_rfm'] = graph_sc_rfm
-            context['centroid_rfm'] = centroid_rfm
+                #pembobotan lrfm
+                w_lrfm1 = [0.238, 0.088, 0.326, 0.348]
+                data_lrfm1 = [list(data*w_lrfm1[i]) for i, data in enumerate(np.array(data_lrfm))]
+                w_lrfm2 = [0.222, 0.182, 0.305, 0.292]
+                data_lrfm2 = [list(data*w_lrfm2[i]) for i, data in enumerate(np.array(data_lrfm))]
+                w_lrfm3 = [0.0405, 0.0747, 0.3155, 0.5691]
+                data_lrfm3 = [list(data*w_lrfm3[i]) for i, data in enumerate(np.array(data_lrfm))]
 
-            context['data_sc_lrfm'] = list(map(list, zip(*data_sc_lrfm)))
-            context['graph_sc_lrfm'] = graph_sc_lrfm
-            context['centroid_lrfm'] = centroid_lrfm            
+                #silhouette coefficient rfm
+                data_sc_rfm = [[], [], [],[]]
+                max_sc_rfm = 0
+                centroid_rfm = []
+                mix_data_rfm = [data_rfm1, data_rfm2, data_rfm3, data_rfm]
+                for i, datatest in enumerate(mix_data_rfm):
+                    for j in range(2,7):
+                        km = Kmeans(data = datatest, k=j, max_iter=30).calculate()
+                        sc = SilhouetteCoefficient(km['clusters'], datatest)
+                        data_sc_rfm[i].append(sc.avg_score)
+                        if sc.avg_score > max_sc_rfm:
+                            centroid_rfm = km['centroids']
+                            max_sc_rfm = sc.avg_score
+                            request.session['avg_score_rfm'] = sc.avg_score
+                            request.session['clusters_rfm'] = km['clusters']
+                            request.session['centroids_rfm'] = km['centroids']
+                            request.session['data_weight_rfm'] = mix_data_rfm[i]
+                            request.session['score_si_rfm'] = sc.score_si
+
+                request.session['data_sc_rfm'] = data_sc_rfm
+                graph_sc_rfm = testing_sc_bar(x_base, data_sc_rfm, "Silhouette Coeffiennt RFM")
+                print(data_sc_rfm)
+                print(centroid_rfm)
+
+                # silhouette coefficient lrfm
+                data_sc_lrfm = [[], [], [], []]
+                max_sc_lrfm = 0
+                centroid_lrfm = []
+                mix_data_lrfm = [data_lrfm1, data_lrfm2, data_lrfm3, data_lrfm]
+                for i, datatest in enumerate(mix_data_lrfm):
+                    for j in range(2,7):
+                        km = Kmeans(data = datatest, k=j, max_iter=30).calculate()
+                        sc = SilhouetteCoefficient(km['clusters'], datatest)
+                        data_sc_lrfm[i].append(sc.avg_score)
+                        if sc.avg_score > max_sc_lrfm:
+                            centroid_lrfm = km['centroids']
+                            max_sc_lrfm = sc.avg_score
+                            request.session['avg_score_lrfm'] = sc.avg_score
+                            request.session['clusters_lrfm'] = km['clusters']
+                            request.session['centroids_lrfm'] = km['centroids']
+                            request.session['data_weight_lrfm'] = mix_data_lrfm[i]
+                            request.session['score_si_lrfm'] = sc.score_si
+                            
+                request.session['data_sc_lrfm']  = data_sc_lrfm
+                graph_sc_lrfm = testing_sc_bar(x_base, data_sc_lrfm, "Silhouette Coeffiennt LRFM")
+                print(data_sc_lrfm)
+                print(centroid_lrfm)
+
+                context['k_start'] = 2
+                context['data_sc_rfm'] = list(map(list, zip(*data_sc_rfm)))
+                context['graph_sc_rfm'] = graph_sc_rfm
+                context['centroid_rfm'] = centroid_rfm
+
+                context['data_sc_lrfm'] = list(map(list, zip(*data_sc_lrfm)))
+                context['graph_sc_lrfm'] = graph_sc_lrfm
+                context['centroid_lrfm'] = centroid_lrfm            
 
         return render(request, 'clustering/testing/index.html', context)
     else:
@@ -160,89 +184,114 @@ def testing_volumedata(request):
         }
 
         if request.POST.get('running'):
-            data_customers = Customer.objects.filter(id_company = currentuser['id_company']).values()
-            orders = Order.objects.filter(id_company = currentuser['id_company']).values()
-            data=[[],[],[],[]]
-            current_date = date(2022,1,1)
-            for d in data_customers:
-                length_date = d['last_active'].date()
-                for order in orders:
-                    if d['id_customer'] == order['id_customer']:
-                        if order['date'] < length_date:
-                            length_date = order['date']
+            if request.session.has_key('si_volumedata_rfm') and request.session.has_key('si_volumedata_lrfm'):
+                x = [str(i*10)+"%" for i in range(1,11)]
+                y1=[]
+                y2=[]
+                for i in range(10):
+                    y1.append(request.session['si_volumedata_rfm'][i]['si'])
+                    y2.append(request.session['si_volumedata_lrfm'][i]['si'])
                 
-                data[0].append(abs(length_date - d['last_active'].date()).days)
-                data[1].append(abs(d['last_active'].date() - current_date).days)
-                data[2].append(d['orders'])
-                data[3].append(d['total_spend'])
-        
-            #data rfm
-            data_rfm = data[1:]
-            #data rfm
-            data_lrfm = data.copy()
+                graph_vd = grouped_two_bar(x, y1, y2, "Persentase Data", "Score", "RFM", "LRFM", "Silhouette Coefficient Pada Variasi Volume Data")
+                context['si_volumedata_rfm'] = request.session['si_volumedata_rfm']
+                context['si_volumedata_lrfm'] = request.session['si_volumedata_rfm']
+                context['graph_vd'] = graph_vd
 
-            #split data
-            persen_data = [ int(round(len(data_customers)*(i/10),0)) for i in range(1,11)]
-            data_test_rfm = []
-            data_test_lrfm = []
-            for persen in persen_data:
-                data_test_rfm.append([data_rfm[0][:persen], data_rfm[1][:persen], data_rfm[2][:persen]])
-                data_test_lrfm.append([data_lrfm[0][:persen], data_lrfm[1][:persen], data_lrfm[2][:persen], data_lrfm[3][:persen]])
-            
-            #norm data
-            for i in range(len(persen_data)):
-                data_test_rfm[i] = MinMaxNorm(data_test_rfm[i]).calculate()
-                data_test_lrfm[i] = MinMaxNorm(data_test_lrfm[i]).calculate()
-            
-            # #weight data
-            # for i in range(len(persen_data)):
-            #     w_rfm3 = [0.0594, 0.4507, 0.4899]
-            #     data_test_rfm[i] = [list(data*w_rfm3[j]) for j, data in enumerate(np.array(data_test_rfm[i]))]
-            #     w_lrfm3 = [0.0405, 0.0747, 0.3155, 0.5691]
-            #     data_test_lrfm[i] = [list(data*w_lrfm3[j]) for j, data in enumerate(np.array(data_test_lrfm[i]))]
-                # data_test_rfm[i] = MinMaxNorm(data_test_rfm[i]).calculate()
-                # data_test_lrfm[i] = MinMaxNorm(data_test_lrfm[i]).calculate()
+            else:
 
-            #pengujian volume data rfm
-            si_volumedata_rfm = [ {'volume':i*10, 'k':0, 'si':0} for i in range(1,len(data_test_rfm)+1)]
-            for i, datatest in enumerate(data_test_rfm):
-                max_si = 0
-                for j in range(2,7):
-                    km = Kmeans(data = datatest, k=j, max_iter=30).calculate()
-                    sc = SilhouetteCoefficient(km['clusters'], datatest)
-                    if max_si < sc.avg_score:
-                        max_si = sc.avg_score
-                        si_volumedata_rfm[i]['k'] = j
-                        si_volumedata_rfm[i]['si'] = sc.avg_score
-            print(si_volumedata_rfm)
+                if request.session.has_key('data_rfm') and request.session.has_key('data_lrfm'):
+                    data_rfm = list(map(list, zip(*request.session['data_rfm'])))
+                    data_lrfm = list(map(list, zip(*request.session['data_lrfm'])))
+                else:
+                    data_customers = Customer.objects.filter(id_company = currentuser['id_company']).values()
+                    orders = Order.objects.filter(id_company = currentuser['id_company']).values()
+                    
+                    if len(data_customers)>0 and len(orders)>0:
+                        data=[[],[],[],[]]
+                        current_date = date(2022,1,1)
+                        for d in data_customers:
+                            length_date = d['last_active'].date()
+                            for order in orders:
+                                if d['id_customer'] == order['id_customer']:
+                                    if order['date'] < length_date:
+                                        length_date = order['date']
+                            
+                            data[0].append(abs(length_date - d['last_active'].date()).days)
+                            data[1].append(abs(d['last_active'].date() - current_date).days)
+                            data[2].append(d['orders'])
+                            data[3].append(d['total_spend'])
+                    
+                        #data rfm
+                        data_rfm = data[1:]
+                        #data rfm
+                        data_lrfm = data.copy()
+                    else:
+                        return render(request, 'clustering/testing/testing_volumedata.html', context)
 
-            #pengujian volume data lrfm
-            si_volumedata_lrfm = [ {'volume':i*10, 'k':0, 'si':0} for i in range(1,len(data_test_lrfm)+1)]
-            for i, datatest in enumerate(data_test_lrfm):
-                max_si = 0
-                for j in range(2,7):
-                    km = Kmeans(data = datatest, k=j, max_iter=30).calculate()
-                    sc = SilhouetteCoefficient(km['clusters'], datatest)
-                    if max_si < sc.avg_score:
-                        max_si = sc.avg_score
-                        si_volumedata_lrfm[i]['k'] = j
-                        si_volumedata_lrfm[i]['si'] = sc.avg_score
-            print(si_volumedata_lrfm)
+                #split data
+                persen_data = [ int(round(len(data_rfm[0])*(i/10),0)) for i in range(1,11)]
+                data_test_rfm = []
+                data_test_lrfm = []
+                for persen in persen_data:
+                    data_test_rfm.append([data_rfm[0][:persen], data_rfm[1][:persen], data_rfm[2][:persen]])
+                    data_test_lrfm.append([data_lrfm[0][:persen], data_lrfm[1][:persen], data_lrfm[2][:persen], data_lrfm[3][:persen]])
+                
+                #norm data
+                for i in range(len(persen_data)):
+                    data_test_rfm[i] = MinMaxNorm(data_test_rfm[i]).calculate()
+                    data_test_lrfm[i] = MinMaxNorm(data_test_lrfm[i]).calculate()
+                
+                # #weight data
+                # for i in range(len(persen_data)):
+                #     w_rfm3 = [0.0594, 0.4507, 0.4899]
+                #     data_test_rfm[i] = [list(data*w_rfm3[j]) for j, data in enumerate(np.array(data_test_rfm[i]))]
+                #     w_lrfm3 = [0.0405, 0.0747, 0.3155, 0.5691]
+                #     data_test_lrfm[i] = [list(data*w_lrfm3[j]) for j, data in enumerate(np.array(data_test_lrfm[i]))]
+                    # data_test_rfm[i] = MinMaxNorm(data_test_rfm[i]).calculate()
+                    # data_test_lrfm[i] = MinMaxNorm(data_test_lrfm[i]).calculate()
 
-            #bar chart
-            x = [str(i*10)+"%" for i in range(1,11)]
-            y1=[]
-            y2=[]
-            for i in range(len(persen_data)):
-                y1.append(si_volumedata_rfm[i]['si'])
-                y2.append(si_volumedata_lrfm[i]['si'])
+                #pengujian volume data rfm
+                si_volumedata_rfm = [ {'volume':i*10, 'k':0, 'si':0} for i in range(1,len(data_test_rfm)+1)]
+                for i, datatest in enumerate(data_test_rfm):
+                    max_si = 0
+                    for j in range(2,7):
+                        km = Kmeans(data = datatest, k=j, max_iter=30).calculate()
+                        sc = SilhouetteCoefficient(km['clusters'], datatest)
+                        if max_si < sc.avg_score:
+                            max_si = sc.avg_score
+                            si_volumedata_rfm[i]['k'] = j
+                            si_volumedata_rfm[i]['si'] = sc.avg_score
+                print(si_volumedata_rfm)
+                request.session['si_volumedata_rfm'] = si_volumedata_rfm
 
-            graph_vd = grouped_two_bar(x, y1, y2, "Persentase Data", "Score", "RFM", "LRFM", "Silhouette Coefficient Pada Variasi Volume Data")
+                #pengujian volume data lrfm
+                si_volumedata_lrfm = [ {'volume':i*10, 'k':0, 'si':0} for i in range(1,len(data_test_lrfm)+1)]
+                for i, datatest in enumerate(data_test_lrfm):
+                    max_si = 0
+                    for j in range(2,7):
+                        km = Kmeans(data = datatest, k=j, max_iter=30).calculate()
+                        sc = SilhouetteCoefficient(km['clusters'], datatest)
+                        if max_si < sc.avg_score:
+                            max_si = sc.avg_score
+                            si_volumedata_lrfm[i]['k'] = j
+                            si_volumedata_lrfm[i]['si'] = sc.avg_score
+                print(si_volumedata_lrfm)
+                request.session['si_volumedata_lrfm'] = si_volumedata_lrfm
+
+                #bar chart
+                x = [str(i*10)+"%" for i in range(1,11)]
+                y1=[]
+                y2=[]
+                for i in range(len(persen_data)):
+                    y1.append(si_volumedata_rfm[i]['si'])
+                    y2.append(si_volumedata_lrfm[i]['si'])
+
+                graph_vd = grouped_two_bar(x, y1, y2, "Persentase Data", "Score", "RFM", "LRFM", "Silhouette Coefficient Pada Variasi Volume Data")
 
 
-            context['si_volumedata_rfm'] = si_volumedata_rfm
-            context['si_volumedata_lrfm'] = si_volumedata_lrfm
-            context['graph_vd'] = graph_vd
+                context['si_volumedata_rfm'] = si_volumedata_rfm
+                context['si_volumedata_lrfm'] = si_volumedata_lrfm
+                context['graph_vd'] = graph_vd
 
         return render(request, 'clustering/testing/testing_volumedata.html', context)
     else:
@@ -429,3 +478,21 @@ def testing_rankconsistency(request):
         return render(request, 'clustering/testing/testing_rankconsistency.html', context)
     else:
         return redirect('login')
+
+
+def delete_skenario1(request):
+    try:
+        del request.session['si_volumedata_rfm']
+        del request.session['si_volumedata_lrfm']
+        return redirect('clustering:testing-volumedata')
+    except:
+        return redirect('clustering:testing-volumedata')
+
+def delete_skenario2(request):
+
+    try:
+        del request.session['data_sc_rfm']
+        del request.session['data_sc_lrfm']
+        return redirect('clustering:testing')
+    except:
+        return redirect('clustering:testing')

@@ -31,22 +31,9 @@
             {% csrf_token %}
             <div class="row">
               <div class="col-md-10">
-                <label for="k_start">Rentang Awal k Cluster</label>
-                <select class="form-select select2 mb-2 " aria-label="Default select example" name="k_start"
-                  id="k_start" required>
-                  <option value="" selected>Pilih k Cluster</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                  <option value="6">6</option>
-                </select>
-                <label for="k_end">Rentang Akhir k Cluster</label>
-                <select class="form-select select2" aria-label="Default select example" name="k_end" id="k_end"
-                  required>
-                  <option value="" selected>Pilih k Cluster</option>
-                </select>
-                <button type="submit" class="btn btn-primary mt-3" id="btnProccess">Start Test</button>
+                <input type="hidden" name="running" value="1">
+                <button type="submit" class="btn btn-lg btn-primary mt-3" id="btnProccess"><i
+                  class="fas fa-cogs"></i> Start Test</button>
               </div>
             </div>
           </form>
@@ -171,6 +158,11 @@
                 </table>
                 {% endif %}
 
+              </div>
+              <div class="row mt-5 mb-3">
+                <div class="col-md-6">
+                  <a href="{%url 'clustering:delete-skenario2'%}" class="btn btn-outline-danger">Delete Result Test</a>
+                </div>
               </div>
 
             </div>

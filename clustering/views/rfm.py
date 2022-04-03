@@ -41,6 +41,7 @@ def rfm(request):
             
             #data rfm
             data_rfm = list(map(list, zip(*data)))
+            request.session['data_rfm'] = data_rfm
             #normalization
             data_norm = MinMaxNorm(data).calculate()
 
@@ -50,6 +51,7 @@ def rfm(request):
             data_weight = data_norm.copy()
             for i in range(len(weight)):
                 data_weight[i] = list(map(lambda x : x * list(weight.values())[i], data_weight[i]))
+            request.session['data_weight_rfm'] = data_weight
 
             #kmeans
             max_sc = -1
@@ -111,6 +113,12 @@ def rfm(request):
                     best_silhouette_bar = silhoutte
                     best_count_cluster = member
                     best_count_silhouette = si_cluster
+                    #session
+                    request.session['avg_score_rfm'] = max_sc
+                    request.session['clusters_rfm'] = clusters
+                    request.session['centroids_rfm'] = centroids
+                    request.session['score_si_rfm'] = score_si
+
                 print('Silhouette Coefficient jumlah k cluster '+str(i)+ ' : ' + str(sc.avg_score))
 
             # silhouette plot 
@@ -136,6 +144,7 @@ def rfm(request):
             matrixIdeal = c.matrixIdealSolution()
             distanceAlter = dict(c.distanceAlternative())
             preferensi = c.preferensi()
+            request.session['preferensi_rfm'] = [[data[0], data[1], int(data[2])] for data in preferensi]
 
 
             print('Result :')
@@ -177,6 +186,7 @@ def rfm(request):
             print('Akurasi Rank Consistency : '+ str(sum(consitency)/len(consitency)*100)+'%')
             print(consitency)
             accuracy_rankConsistency = sum(consitency)/len(consitency)*100
+            request.session['rc_rfm'] = accuracy_rankConsistency
             transpose_dataNorm = list(map(list, zip(*data_norm)))
             transpose_dataWeight = list(map(list, zip(*data_weight)))
             transpose_distanceAlter = list(map(list, zip(*[data for data in distanceAlter.values()])))
