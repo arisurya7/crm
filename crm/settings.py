@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'clustering',
     'import_export',
+    'clear_cache',
 ]
 
 MIDDLEWARE = [

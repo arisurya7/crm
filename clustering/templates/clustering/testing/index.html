@@ -48,7 +48,7 @@
             <div class="card-body">
               <div class="row">
                 <h1 class="mb-3 mt-3">Hasil Pengujian</h1>
-                <h3 class="mt-2">Silhouette Coefficient (SI) RFM</h3>
+                <h3 class="mt-2">Silhouette Coefficient (SC) RFM</h3>
                 {% if graph_sc_rfm %}
                 <img src="data:image/png;base64, {{ graph_sc_rfm|safe }}" class="mt-2 mx-auto d-block" alt=""
                   style="width: 55rem;">
@@ -57,9 +57,9 @@
                   <thead>
                     <tr>
                       <th>Jumlah Cluster</th>
-                      <th>SI Data Bobot 1</th>
-                      <th>SI Data Bobot 2</th>
-                      <th>SI Data Bobot 3</th>
+                      <th>SC Data Bobot 1</th>
+                      <th>SC Data Bobot 2</th>
+                      <th>SC Data Bobot 3</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -75,7 +75,7 @@
                 </table>
               </div>
               <div class="row">
-                <h3 class="mt-5">Silhouette Coefficient (SI) LRFM</h3>
+                <h3 class="mt-5">Silhouette Coefficient (SC) LRFM</h3>
                 {% if graph_sc_lrfm %}
                 <img src="data:image/png;base64, {{ graph_sc_lrfm|safe }}" class="mt-2 mx-auto d-block" alt=""
                   style="width: 55rem;">

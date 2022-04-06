@@ -174,14 +174,14 @@ def general_rfm(request):
         c = Topsis(data=data, benefit=benefit, cost=cost,alternative=alternative_label)
         top_pref = c.top_pref
         low_pref = c.low_pref
-        matrixNorm = list(map(list, zip(*[data for data in c.matrixNorm.values()])))
-        matrixIdeal = c.matrixIdeal
-        distanceAlter = dict(c.distanceAlter)
-        preferensi = c.result
+        matrixNorm = list(map(list, zip(*[data for data in c.matrixNormalization().values()])))
+        matrixIdeal = c.matrixIdealSolution()
+        distanceAlter = dict(c.distanceAlternative())
+        preferensi = c.preferensi()
 
 
         print('Result :')
-        print(c.result)
+        print(c.preferensi())
 
         # Rank Consistency
         print('Rank Consistency :')
@@ -202,11 +202,18 @@ def general_rfm(request):
             c = Topsis(data=data_uji, benefit=benefit, cost=cost, alternative=alternative_test)        
             print('Add alternatif ' + str(i))
             print(data_uji)
-            print(c.result)
-            matrix_rankConsistency.append(c.result)
+            print(c.preferensi())
+            rc_pref = c.preferensi()
+            value_lf = [[value[0], value[1], value[2], i] for i, value in enumerate(rc_pref) if c.low_pref == value[0]][0]
+            matrix_rankConsistency.append([ list(c) for c in rc_pref])
 
             if top_pref == c.top_pref and low_pref == c.low_pref:
                 consitency.append(1)
+                for k, pref in enumerate(rc_pref):
+                        if pref[1]==value_lf[1] and pref[2] > value_lf[2]:
+                            #swap
+                            matrix_rankConsistency[i][k][2] = matrix_rankConsistency[i][value_lf[-1]][2]
+                            matrix_rankConsistency[i][value_lf[-1]][2] = pref[2]
             else:
                 consitency.append(0)
         print('Akurasi Rank Consistency : '+ str(sum(consitency)/len(consitency)*100)+'%')
@@ -440,14 +447,14 @@ def general_lrfm(request):
         c = Topsis(data=data, benefit=benefit, cost=cost,alternative=alternative_label)
         top_pref = c.top_pref
         low_pref = c.low_pref
-        matrixNorm = list(map(list, zip(*[data for data in c.matrixNorm.values()])))
-        matrixIdeal = c.matrixIdeal
-        distanceAlter = dict(c.distanceAlter)
-        preferensi = c.result
+        matrixNorm = list(map(list, zip(*[data for data in c.matrixNormalization().values()])))
+        matrixIdeal = c.matrixIdealSolution()
+        distanceAlter = dict(c.distanceAlternative())
+        preferensi = c.preferensi()
 
 
         print('Result :')
-        print(c.result)
+        print(c.preferensi())
 
         # Rank Consistency
         print('Rank Consistency :')
@@ -468,11 +475,18 @@ def general_lrfm(request):
             c = Topsis(data=data_uji, benefit=benefit, cost=cost, alternative=alternative_test)        
             print('Add alternatif ' + str(i))
             print(data_uji)
-            print(c.result)
-            matrix_rankConsistency.append(c.result)
+            print(c.preferensi())
+            rc_pref = c.preferensi()
+            value_lf = [[value[0], value[1], value[2], i] for i, value in enumerate(rc_pref) if c.low_pref == value[0]][0]
+            matrix_rankConsistency.append([ list(c) for c in rc_pref])
 
             if top_pref == c.top_pref and low_pref == c.low_pref:
                 consitency.append(1)
+                for k, pref in enumerate(rc_pref):
+                        if pref[1]==value_lf[1] and pref[2] > value_lf[2]:
+                            #swap
+                            matrix_rankConsistency[i][k][2] = matrix_rankConsistency[i][value_lf[-1]][2]
+                            matrix_rankConsistency[i][value_lf[-1]][2] = pref[2]
             else:
                 consitency.append(0)
         print('Akurasi Rank Consistency : '+ str(sum(consitency)/len(consitency)*100)+'%')

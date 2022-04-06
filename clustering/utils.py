@@ -164,10 +164,10 @@ def testing_sc_bar(x, data, title):
     ax.set_yticks([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
     ax.legend()
 
-    ax.bar_label(rects1, padding=3)
-    ax.bar_label(rects2, padding=3)
-    ax.bar_label(rects3, padding=3)
-    ax.bar_label(rects4, padding=3)
+    ax.bar_label(rects1, padding=3, rotation=90)
+    ax.bar_label(rects2, padding=3, rotation=90)
+    ax.bar_label(rects3, padding=3, rotation=90)
+    ax.bar_label(rects4, padding=3, rotation=90)
 
     graph = get_graph()
     return graph

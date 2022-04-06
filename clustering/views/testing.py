@@ -192,9 +192,9 @@ def testing_volumedata(request):
                     y1.append(request.session['si_volumedata_rfm'][i]['si'])
                     y2.append(request.session['si_volumedata_lrfm'][i]['si'])
                 
-                graph_vd = grouped_two_bar(x, y1, y2, "Persentase Data", "Score", "RFM", "LRFM", "Silhouette Coefficient Pada Variasi Volume Data")
+                graph_vd = grouped_two_bar(x, y1, y2, "Persentase Data", "Score", "RFM", "LRFM", "Silhouette Coefficient Pada Variasi Persentase Data")
                 context['si_volumedata_rfm'] = request.session['si_volumedata_rfm']
-                context['si_volumedata_lrfm'] = request.session['si_volumedata_rfm']
+                context['si_volumedata_lrfm'] = request.session['si_volumedata_lrfm']
                 context['graph_vd'] = graph_vd
 
             else:
@@ -286,7 +286,7 @@ def testing_volumedata(request):
                     y1.append(si_volumedata_rfm[i]['si'])
                     y2.append(si_volumedata_lrfm[i]['si'])
 
-                graph_vd = grouped_two_bar(x, y1, y2, "Persentase Data", "Score", "RFM", "LRFM", "Silhouette Coefficient Pada Variasi Volume Data")
+                graph_vd = grouped_two_bar(x, y1, y2, "Persentase Data", "Score", "RFM", "LRFM", "Silhouette Coefficient Pada Variasi Persentase Data")
 
 
                 context['si_volumedata_rfm'] = si_volumedata_rfm
@@ -431,7 +431,7 @@ def testing_rankconsistency(request):
                 #rank consistenct lrfm
                 benefit = ['f', 'm']
                 cost = ['l','r']
-                len_centroid_lrfm = len(data_topsis_rfm['r'])
+                len_centroid_lrfm = len(data_topsis_lrfm['r'])
                 label = ['Cluster '+str(i+1) for i in range(len_centroid_lrfm)]
                 t_lrfm = Topsis(data=data_topsis_lrfm, benefit=benefit, cost=cost,alternative=label)
                 top_pref_lrfm = t_lrfm.top_pref
@@ -453,6 +453,7 @@ def testing_rankconsistency(request):
                     c = Topsis(data=data_uji, benefit=benefit, cost=cost, alternative=alternative_test)        
                     print('Add alternatif ' + str(i))
                     print(c.preferensi())
+                    rc_pref = c.preferensi()
                     low_value_lrfm = [[value[0], value[1], value[2], i] for i, value in enumerate(rc_pref) if c.low_pref == value[0]][0]
                     matrix_rankConsistencyLrfm.append([ list(c) for c in rc_pref])
 
