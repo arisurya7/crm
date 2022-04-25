@@ -34,9 +34,11 @@ urlpatterns = [
     #General RFM
     path('general-rfm', views.general_rfm, name = "general-rfm"),
     path('clear-general-rfm', views.clear_general_rfm, name = "clear-general-rfm"),
+    path('export-rfm', views.export_rfm, name = "export-rfm"),
     #General LRFM
     path('general-lrfm', views.general_lrfm, name = "general-lrfm"),
     path('clear-general-lrfm', views.clear_general_lrfm, name = "clear-general-lrfm"),
+    path('export-lrfm', views.export_lrfm, name = "export-lrfm"),
     #Logout
     path('logout/', views.logout, name="logout")
 ]

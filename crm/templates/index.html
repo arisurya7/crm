@@ -13,67 +13,151 @@
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <!-- Aos Animation -->
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
-    <style>
-        body {
-            font-family: 'Poppins';
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'clustering/css/mystyle.css' %}">
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/fe118aecdc.js" crossorigin="anonymous"></script>
 
-    <title>CRM</title>
+    <title>Claser</title>
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-custom  fixed-top shadow-sm">
         <div class="container">
-
-            <div class="container-fluid">
-                <a class="navbar-brand" href="{% url 'index' %}">
-                    <img src="{% static 'clustering/vendor/dist/img/logofg.png' %}" alt="" width="30" height="30"
-                        class="d-inline-block align-text-top">
-                    CRM System
-                </a>
-            </div>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+            <!-- <a class="navbar-brand" href="#"><img src="{% static 'clustering/vendor/dist/img/logofg.png' %}" alt="" style="width: 40px;"></a> -->
+            <a class="navbar-brand" href="#">CLASER</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"><i class="fas fa-bars"></i></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{%url 'index'%}">Home</a>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <ul class="navbar-nav ms-auto flex-nowrap">
+                    <li class="nav-item home nav-active">
+                        <a href="#home" class="nav-link m-2 menu-item">Home</a>
+                    </li>
+                    <li class="nav-item about">
+                        <a href="#about" class="nav-link m-2 menu-item">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{%url 'login'%}">Login</a>
+                        <a href="{% url 'login'%}" class="nav-link m-2 menu-item">Login</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
-    <div class="container">
-        <div class="row">
+
+    <!-- Floating Whatsapp -->
+    <!-- <a href="https://api.whatsapp.com/send?phone=087796991245text=Hallo%20Admin%20,%20Saya%20ingin%20bertanya%20..."
+     class="float-whatsapp" target="_blank"><i class="fa fa-whatsapp icon-float-whatsapp"></i></a> -->
+
+    <section class="header" id="home">
+        <div class="container"">
+            <div class=" row">
             <div class="col-md-7" data-aos="fade-left">
-                <p class="mt-5  display-6 text-primary">Selamat Datang</p>
+                <p class="mt-5  display-6 text-primary">Clustering Customer System</p>
                 <h2 class="mt-5 text-secondary">
-                    "<i>Clustering</i> Pelanggan untuk Menentukan Strategi Pemasaran Menggunakan Metode <i>K-Means</i>
-                    dan TOPSIS
-                    (Studi Kasus: Toko Kerajinan X)"
+                    "Kenali kelompok pelanggan anda untuk bisnis yang lebih baik"
                 </h2>
-                <a href="{% url 'clustering:clustering_index' %}" class="btn btn-lg btn-primary rounded-pill mt-5" style="padding-left: 2rem; padding-right: 2rem;">Get Started</a>
+                <a href="{% url 'clustering:clustering_index' %}" class="btn btn-lg btn-primary rounded-pill mt-5"
+                    style="padding-left: 2rem; padding-right: 2rem;">Coba Sekarang</a>
+                <a href="#about" class="btn btn-lg btn-outline-primary rounded-pill mt-5"
+                    style="padding-left: 2rem; padding-right: 2rem;">Info</a>
             </div>
             <div class="col-md-5" data-aos="fade-right">
-                <img src="{%static 'clustering/img/vc_home.jpg'%}" alt="" style="width: 32rem;">
+                <img src="{%static 'clustering/img/vc_home.jpg'%}" alt="" style="width: 35rem;">
             </div>
         </div>
-    </div>
+        </div>
+    </section>
+
+    <!-- What Info -->
+    <section class="about pb-5 pt-5 bg-primary-custom" id="about">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm align-self-center text-about" data-aos="fade-up">
+                    <h1 class="text-white">About Claser</h1>
+                    <hr class="hr-left rounded-pill text-white">
+                    <p class="text-white">Sistem Claser (Clustering Customer) merupakan aplikasi berbasis website yang
+                        berfungsi untuk memberikan rekomendasi kelompok pelanggan berdasarkan kesamaan karakteristiknya.
+                        Karakteristik kelompok pelanggan menjadi isu penting bagi perusahaan dalam menentukan strategi
+                        pemasaran yang tepat sasaran.
+                    </p>
+                    <p class="text-white">
+                        Model data yang digunakan pada sistem ini adalah model data RFM dan LRFM dengan pembobotan model
+                        data menggunakan pembobotan Analytic Hierarchy Process (AHP).
+                    </p>
+                    <p class="text-white">
+                        Proses clustering dilakukan dengan menggunakan metode K-Means dan dilanjutkan dengan penentuan
+                        peringkat cluster pelanggan dengan menggunakan metode Technique for Order Preference by
+                        Similarity to Ideal Solution (TOPSIS).
+                    </p>
+                </div>
+                <div class="col-sm img-about text-center" data-aos="fade-up">
+                    <img class="vector_question" src="#" alt="vector question">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Info -->
+    <section class="whyinfo pb-5 pt-5" id="whyinfo">
+        <div class="container">
+            <div class="row text-center pb-5" data-aos="fade-up">
+                <h1 class="text-dark pb-4 pt-4">Kenapa Claser</h1>
+                <hr class="hr-center rounded-pill ">
+            </div>
+            <div class="row justify-content-center mt-5 mb-5" data-aos="fade-up">
+                <div class="col-lg-2 text-center color-primary-custom icon-list">
+                    <i class="fas fa-shield-alt display-5 p-4 rounded-circle bg-light"></i>
+                </div>
+                <div class="col-lg-9 align-self-center">
+                    <h5 class="fw-bolder">Lorem ipsum dolor sit amet</h5>
+                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Excepturi ex ea eligendi provident,
+                        fugit numquam modi asperiores accusantium praesentium omnis eum labore distinctio, nisi iure
+                        dolorem inventore ut porro! Aliquid.</p>
+                </div>
+            </div>
+            <div class="row justify-content-center mt-5 mb-5" data-aos="fade-up">
+                <div class="col-lg-2 text-center color-primary-custom icon-list">
+                    <i class="fas fa-tachometer-alt display-5 p-4 rounded-circle bg-light"></i>
+                </div>
+                <div class="col-lg-9 align-self-center">
+                    <h5 class="fw-bolder">Lorem ipsum dolor sit amet</h5>
+                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Excepturi ex ea eligendi provident,
+                        fugit numquam modi asperiores accusantium praesentium omnis eum labore distinctio, nisi iure
+                        dolorem inventore ut porro! Aliquid.</p>
+                </div>
+            </div>
+            <div class="row justify-content-center mt-5 mb-5" data-aos="fade-up">
+                <div class="col-lg-2 text-center color-primary-custom icon-list">
+                    <i class="fas fa-recycle display-5 p-4 rounded-circle bg-light"></i>
+                </div>
+                <div class="col-lg-9 align-self-center">
+                    <h5 class="fw-bolder">Lorem ipsum dolor sit amet</h5>
+                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Excepturi ex ea eligendi provident,
+                        fugit numquam modi asperiores accusantium praesentium omnis eum labore distinctio, nisi iure
+                        dolorem inventore ut porro! Aliquid.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-primary-custom">
+        <p class="text-center text-light pt-3">&copy COPYRIGHT 2022. Claser</p>
+    </footer>
 
 
+    <!-- Separate Popper and Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
         integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous">
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
         integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous">
     </script>
+
+    <script src="{% static 'clustering/js/myscripts.js'%}"></script>
+
+
     <!-- Aos Animation -->
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script>

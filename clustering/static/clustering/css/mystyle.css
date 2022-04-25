@@ -1,0 +1,300 @@
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Poppins';
+}
+
+.navbar-custom {
+    background-color: white;
+}
+
+.navbar-custom .nav-link,
+.navbar-toggler-icon {
+    color: #0e0d0d;
+}
+
+.navbar .navbar-nav .nav-link:hover {
+    color: #0D6EFD;
+}
+
+body .navbar .navbar-nav li.nav-active a {
+    color: #0D6EFD;
+}
+
+.navbar .navbar-nav .nav-link {
+    position: relative;
+}
+
+.navbar .navbar-nav .nav-link::after {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    background-color: #0D6EFD;
+    color: transparent;
+    width: 0%;
+    content: '';
+    height: 3px;
+    transition: all 0.5s;
+}
+
+.navbar .navbar-nav .nav-link:hover::after {
+    width: 100%;
+}
+
+.float-whatsapp,
+.float-whatsapp:hover {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    bottom: 40px;
+    right: 40px;
+    background-color: #0D6EFD;
+    color: #FFF;
+    border-radius: 50px;
+    text-align: center;
+    font-size: 30px;
+    box-shadow: 2px 2px 3px #999;
+    z-index: 100;
+}
+
+.icon-float-whatsapp {
+    margin-top: 16px;
+}
+
+
+
+body section.header img.vector_header {
+    width: 100%;
+}
+
+body .color-primary-custom {
+    color: #0D6EFD;
+}
+
+body .color-secondary-custom {
+    color: #FBCB2D;
+}
+
+body .bg-primary-custom {
+    background-color: #0D6EFD;
+}
+
+body .bg-secondary-custom {
+    background-color: #FBCB2D;
+}
+
+
+body button.btn-outline-custom-primary,
+body a.btn-outline-custom-primary {
+    color: #0D6EFD;
+    font-size: 16px;
+    padding: 0.5em 2em;
+    border: 1px #0D6EFD solid;
+}
+
+body button.btn-outline-custom-primary:hover,
+body a.btn-outline-custom-primary:hover {
+    color: white;
+    background-color: #0D6EFD;
+    font-size: 16px;
+    padding: 0.5em 2em;
+    border: 1px #0D6EFD solid;
+}
+
+body button.btn-custom-primary:hover,
+body a.btn-custom-primary:hover {
+    color: #0D6EFD;
+    font-size: 16px;
+    background-color: white;
+    padding: 0.5em 2em;
+    border: 1px #0D6EFD solid;
+}
+
+body button.btn-custom-primary,
+body a.btn-custom-primary {
+    color: white;
+    background-color: #0D6EFD;
+    font-size: 16px;
+    padding: 0.5em 2em;
+    border: 1px #0D6EFD solid;
+}
+
+.hr-left {
+    width: 6rem;
+    border-top: 3px #FBCB2D solid;
+    margin-top: 2em;
+    margin-bottom: 2em;
+    opacity: 100%;
+}
+
+hr.hr-center {
+    width: 6rem;
+    border-top: 3px black solid;
+    margin: auto;
+    opacity: 100%;
+}
+
+hr.hr-center-white {
+    width: 6rem;
+    border-top: 3px white solid;
+    margin: auto;
+    opacity: 100%;
+}
+
+h1 span.mata {
+    color: #0D6EFD;
+}
+
+h1 span.mu {
+    color: #FBCB2D;
+}
+
+section.whyinfo .icon-list:hover {
+    color: #FBCB2D;
+}
+
+body section.whatinfo {
+    background-color: #F6F7F7;
+}
+
+section.whatinfo img.vector_question {
+    width: 80%;
+}
+
+section.research img.vector_research {
+    width: 80%;
+}
+
+section.product img.img-product {
+    width: 80%;
+    border-radius: 5%;
+    border: 2px #FBCB2D solid;
+    box-shadow: 0 8px 12px 0 rgba(248, 252, 24, 0.2), 0 10px 24px 0 rgba(248, 252, 24, 0.19);
+}
+
+section.contact {
+    background-color: #F6F7F7;
+}
+
+section.contact i.icon-contact {
+    font-size: 2em;
+    width: 3rem;
+}
+
+section.contact a,
+body div.modal a {
+    text-decoration: none;
+}
+
+body div.modal p {
+    font-size: 14px;
+}
+
+
+
+
+footer {
+    border-bottom: 5px #FBCB2D solid;
+}
+
+@media (max-width:768px) {
+
+    section.whyinfo p,
+    h5 {
+        text-align: center;
+    }
+
+    section.whyinfo h5 {
+        margin-top: 2rem;
+    }
+
+    body section.header img.vector_header {
+        padding-top: 3rem;
+    }
+
+    body section.header div.text-header,
+    section.whatinfo .text-whatinfo {
+        padding: 1rem;
+    }
+}
+
+@media (max-width:500px) {
+
+    section.whyinfo p,
+    h5 {
+        text-align: center;
+    }
+
+    section.whyinfo h5 {
+        margin-top: 2rem;
+    }
+
+    body section.header {
+        padding-top: 5rem;
+        padding-bottom: 5rem;
+    }
+
+    section.header img.vector_header {
+        padding-top: 3rem;
+    }
+
+    section.header div.text-header {
+        padding: 1rem;
+        text-align: center;
+    }
+
+    section.whatinfo .text-whatinfo {
+        padding: 2rem;
+        text-align: center;
+    }
+
+    hr.hr-left {
+        margin: 2rem auto;
+    }
+
+    section.research .text-research {
+        padding: 2rem;
+        text-align: center;
+    }
+
+    section.product .text-product {
+        padding: 2rem;
+        text-align: center;
+    }
+
+
+    section.contact .icon-medsos,
+    h1,
+    .information-contact,
+    div.button-contact {
+        text-align: center;
+    }
+
+    section.contact .form-contact {
+        padding: 1rem;
+    }
+
+    section.contact i.icon-contact {
+        font-size: 15px;
+        width: 25px;
+    }
+
+}
+
+@media only screen and (min-width: 960px) {
+    .navbar .navbar-nav .nav-link {
+        padding: 1em 0.7em;
+    }
+
+    .navbar {
+        padding: 0;
+    }
+
+    .navbar .navbar-brand {
+        padding: 0 0.7em;
+    }
+}

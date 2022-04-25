@@ -14,43 +14,41 @@
     <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
     <!-- Font Awesome -->
     <script src="https://kit.fontawesome.com/fe118aecdc.js" crossorigin="anonymous"></script>
+    <!-- My Style -->
+    <link rel="stylesheet" href="{% static 'clustering/css/mystyle.css' %}">
     <!-- DataTable -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap4.min.css">
 
     <title>Clustering</title>
 </head>
 
-<body style="background-color: rgb(249, 253, 255);">
+<body>
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-custom  fixed-top shadow-sm">
         <div class="container">
-
-            <div class="container-fluid">
-                <a class="navbar-brand" href="{% url 'index' %}">
-                    <img src="{% static 'clustering/vendor/dist/img/logofg.png' %}" alt="" width="30" height="30"
-                        class="d-inline-block align-text-top">
-                    CRM System
-                </a>
-            </div>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+            <!-- <a class="navbar-brand" href="#"><img src="{% static 'clustering/vendor/dist/img/logofg.png' %}" alt="" style="width: 40px;"></a> -->
+            <a class="navbar-brand" href="{% url 'index'%}">CLASER</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"><i class="fas fa-bars"></i></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{%url 'index'%}">Home</a>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <ul class="navbar-nav ms-auto flex-nowrap">
+                    <li class="nav-item home nav-active">
+                        <a href="{% url 'index'%}#home" class="nav-link m-2 menu-item">Home</a>
+                    </li>
+                    <li class="nav-item about">
+                        <a href="{% url 'index'%}#about" class="nav-link m-2 menu-item">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{%url 'login'%}">Login</a>
+                        <a href="{% url 'login'%}" class="nav-link m-2 menu-item">Login</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <section>
+    <section class="mt-5">
         <div class="container mb-5">
             <div class="row">
                 <div class="col-md-10">
@@ -164,7 +162,7 @@
                             <form action="{% url 'clustering:general-rfm'%}" class="form-inline" method="post">
                                 {% csrf_token %}
                                 <div class="row mb-2">
-                                    <div class="col-md-7">
+                                    <div class="col-md-8">
                                         <input type="hidden" name="id_weight" value="{{ id_weight }}">
                                         <div class="form-group">
                                             <div class="form-check form-check-inline">
@@ -179,7 +177,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-5">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <select class="form-select" aria-label="Default select example"
                                                 name="score1" required>
@@ -199,7 +197,7 @@
                                 </div>
 
                                 <div class="row mb-2">
-                                    <div class="col-md-7">
+                                    <div class="col-md-8">
                                         <div class="form-group">
                                             <div class="form-check form-check-inline">
                                                 <input class="form-check-input" type="radio" name="input2" value="20"
@@ -213,7 +211,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-5">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <select class="form-select" aria-label="Default select example"
                                                 name="score2" required>
@@ -233,7 +231,7 @@
                                 </div>
 
                                 <div class="row mb-2">
-                                    <div class="col-md-7">
+                                    <div class="col-md-8">
                                         <div class="form-group">
                                             <div class="form-check form-check-inline">
                                                 <label class="form-check-label" for="mf">Monetary</label>
@@ -247,7 +245,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-5">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <select class="form-select" aria-label="Default select example"
                                                 name="score3" required>
@@ -850,6 +848,11 @@
                                 <div class="col-md-12">
                                     {% for data_cluster in actual_cluster_member  %}
                                     <h5 class="mt-3 mb-3">Cluster {{ forloop.counter }}</h5>
+                                    <form action="{% url 'clustering:export-rfm'%}" class="form-inline" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="index_cluster" value="{{ forloop.counter0 }}">
+                                        <button type="submit" class="btn btn-success"> Download </button>
+                                    </form>
                                     <table class="table table-bordered table-hover table-actual-cluster-member">
                                         <thead>
                                             <tr>
@@ -863,7 +866,7 @@
                                         <tbody>
                                             {% for data in data_cluster  %}
                                             <tr>
-                                                <td>{{ forloop.counter }}</td>
+                                                <td>{{ data.id }}</td>
                                                 <td>{{ data.r }}</td>
                                                 <td>{{ data.f }}</td>
                                                 <td>{{ data.m }}</td>
@@ -918,6 +921,8 @@
     <!-- DataTable -->
     <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap4.min.js"></script>
+    <!-- My Scripts -->
+    <script src="{% static 'clustering/js/myscripts.js'%}"></script>
 
     <script>
         $('#table-customer').DataTable({

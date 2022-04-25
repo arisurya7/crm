@@ -8,3 +8,7 @@ sklearn==0.0
 scikit-learn==1.0.2
 tablib==3.1.0
 whitenoise==6.0.0
+django-clear-cache==0.3
+django-clearcache==1.2.1
+numpy==1.22.3
+pandas==1.4.2

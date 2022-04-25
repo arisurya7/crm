@@ -1,9 +1,10 @@
 import string
+import csv
+from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
-from clustering.models import Customer, Order, WeightLRFM, WeightRFM
-from clustering.resources import CustomerResources, OrderResources
+from clustering.models import WeightLRFM, WeightRFM
+from clustering.resources import CustomerResources
 from django.contrib import messages
-from django.http.response import JsonResponse
 from tablib import Dataset
 from datetime import datetime
 from datetime import date
@@ -238,7 +239,7 @@ def general_rfm(request):
             f_temp = []
             m_temp = []
             for j in range(len(clusters)):
-                row_data = {'r':0, 'f':0, 'm':0, 'cluster':i+1}
+                row_data = {'id':j+1, 'r':0, 'f':0, 'm':0, 'cluster':i+1}
                 if i == clusters[j]:
                     row_data['r'] = data_rfm[j][0]
                     row_data['f'] = data_rfm[j][1]
@@ -247,10 +248,11 @@ def general_rfm(request):
                     r_temp.append(data_rfm[j][0])
                     f_temp.append(data_rfm[j][1])
                     m_temp.append(data_rfm[j][2])
-                    row_data = {'r':0, 'f':0, 'm':0, 'cluster':i+1}
+                    row_data = {'id':j+1,'r':0, 'f':0, 'm':0, 'cluster':i+1}
             actual_cluster.append({'cluster': 'Cluster '+str(i+1), 'r':sum(r_temp)/len(r_temp), 'f':sum(f_temp)/len(f_temp), 'm':sum(m_temp)/len(m_temp)})
         
         id_customers = [ data['id'] for data in data_customers]
+        request.session['actual_cluster_member'] = actual_cluster_member
 
         context['k_start'] = k_start
         context['data_rfm'] = data_rfm
@@ -288,9 +290,30 @@ def clear_general_rfm(request):
     try:
         del request.session['data_customers']
         del request.session['weight_rfm']
+        del request.session['actual_cluster_member']
     except:
         return redirect('clustering:general-rfm')
     return redirect('clustering:general-rfm')
+
+def export_rfm(request):
+    if request.session.has_key("data_customers"):
+        if request.POST["index_cluster"]:
+            index_cluster = int(request.POST['index_cluster'])
+            path_name = 'attachment; filename="data_cluster'+ str(index_cluster+1) + '.csv"'
+            response = HttpResponse(
+                content_type='text/csv',
+                headers={'Content-Disposition': path_name},
+                )
+
+            writer = csv.writer(response)
+            writer.writerow(['id_customer','recency', 'frequency', 'monetary', 'cluster'])
+            
+            for d in request.session['actual_cluster_member'][index_cluster]:
+                writer.writerow([d['id'], d['r'], d['f'], d['m'], d['cluster']])
+            return response
+    
+    else:
+        return redirect('clustering:general-rfm')
 
 def general_lrfm(request):
     request.session['weight_lrfm'] = WeightLRFM.objects.filter(id = 1).values()[0 ]
@@ -524,10 +547,11 @@ def general_lrfm(request):
                     r_temp.append(data_lrfm[j][1])
                     f_temp.append(data_lrfm[j][2])
                     m_temp.append(data_lrfm[j][3])
-                    row_data = {'id':i+1,'l':0,'r':0, 'f':0, 'm':0, 'cluster':i+1}
+                    row_data = {'id':j+1,'l':0,'r':0, 'f':0, 'm':0, 'cluster':i+1}
             actual_cluster.append({'cluster': 'Cluster '+str(i+1), 'l':sum(l_temp)/len(l_temp), 'r':sum(r_temp)/len(r_temp), 'f':sum(f_temp)/len(f_temp), 'm':sum(m_temp)/len(m_temp)})
         
         id_customers = [ data['id'] for data in data_customers_lrfm]
+        request.session['actual_cluster_member_lrfm'] = actual_cluster_member
 
         context['k_start'] = k_start
         context['data_lrfm'] = data_lrfm
@@ -563,6 +587,27 @@ def clear_general_lrfm(request):
     try:
         del request.session['data_customers_lrfm']
         del request.session['weight_lrfm']
+        del request.session['actual_cluster_member_lrfm']
     except:
         return redirect('clustering:general-lrfm')
     return redirect('clustering:general-lrfm')
+
+def export_lrfm(request):
+    if request.session.has_key("data_customers"):
+        if request.POST["index_cluster"]:
+            index_cluster = int(request.POST['index_cluster'])
+            path_name = 'attachment; filename="data_cluster'+ str(index_cluster+1) + '.csv"'
+            response = HttpResponse(
+                content_type='text/csv',
+                headers={'Content-Disposition': path_name},
+                )
+
+            writer = csv.writer(response)
+            writer.writerow(['id_customer', 'length', 'recency', 'frequency', 'monetary', 'cluster'])
+            
+            for d in request.session['actual_cluster_member_lrfm'][index_cluster]:
+                writer.writerow([d['id'], d['l'], d['r'], d['f'], d['m'], d['cluster']])
+            return response
+    
+    else:
+        return redirect('clustering:general-lrfm')
