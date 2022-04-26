@@ -50,8 +50,8 @@
      class="float-whatsapp" target="_blank"><i class="fa fa-whatsapp icon-float-whatsapp"></i></a> -->
 
     <section class="header" id="home">
-        <div class="container"">
-            <div class=" row">
+        <div class="container">
+            <div class="row" style="margin-top: 10rem; margin-bottom: 10rem;">
             <div class="col-md-7" data-aos="fade-left">
                 <p class="mt-5  display-6 text-primary">Clustering Customer System</p>
                 <h2 class="mt-5 text-secondary">
@@ -63,7 +63,7 @@
                     style="padding-left: 2rem; padding-right: 2rem;">Info</a>
             </div>
             <div class="col-md-5" data-aos="fade-right">
-                <img src="{%static 'clustering/img/vc_home.jpg'%}" alt="" style="width: 35rem;">
+                <img src="{%static 'clustering/img/vc_home.jpg'%}" alt="" style="width: 30rem;">
             </div>
         </div>
         </div>
@@ -72,11 +72,11 @@
     <!-- What Info -->
     <section class="about pb-5 pt-5 bg-primary-custom" id="about">
         <div class="container">
-            <div class="row">
-                <div class="col-sm align-self-center text-about" data-aos="fade-up">
-                    <h1 class="text-white">About Claser</h1>
-                    <hr class="hr-left rounded-pill text-white">
-                    <p class="text-white">Sistem Claser (Clustering Customer) merupakan aplikasi berbasis website yang
+            <div class="row justify-content-center">
+                <div class="col-sm-6 align-self-center  text-center text-about mb-5" data-aos="fade-up">
+                    <h1 class="text-white mt-5">About CLASER</h1>
+                    <hr class="hr-center  rounded-pill text-white" style=" border-top: 3px white solid;">
+                    <p class="text-white mt-5">Sistem Claser (Clustering Customer) merupakan aplikasi berbasis website yang
                         berfungsi untuk memberikan rekomendasi kelompok pelanggan berdasarkan kesamaan karakteristiknya.
                         Karakteristik kelompok pelanggan menjadi isu penting bagi perusahaan dalam menentukan strategi
                         pemasaran yang tepat sasaran.
@@ -90,9 +90,7 @@
                         peringkat cluster pelanggan dengan menggunakan metode Technique for Order Preference by
                         Similarity to Ideal Solution (TOPSIS).
                     </p>
-                </div>
-                <div class="col-sm img-about text-center" data-aos="fade-up">
-                    <img class="vector_question" src="#" alt="vector question">
+                    <a href="#whyinfo" class="btn btn-outline-light rounded-pill mt-5" style="padding-left: 2rem; padding-right: 2rem;"> Lebih Detail </a>
                 </div>
             </div>
         </div>
@@ -102,29 +100,18 @@
     <section class="whyinfo pb-5 pt-5" id="whyinfo">
         <div class="container">
             <div class="row text-center pb-5" data-aos="fade-up">
-                <h1 class="text-dark pb-4 pt-4">Kenapa Claser</h1>
+                <h1 class="text-dark pb-4 pt-4">Tahapan CLASER</h1>
                 <hr class="hr-center rounded-pill ">
             </div>
             <div class="row justify-content-center mt-5 mb-5" data-aos="fade-up">
                 <div class="col-lg-2 text-center color-primary-custom icon-list">
-                    <i class="fas fa-shield-alt display-5 p-4 rounded-circle bg-light"></i>
+                    <i class="fas fa-database display-5 p-4 rounded-circle bg-light"></i>
                 </div>
                 <div class="col-lg-9 align-self-center">
-                    <h5 class="fw-bolder">Lorem ipsum dolor sit amet</h5>
-                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Excepturi ex ea eligendi provident,
-                        fugit numquam modi asperiores accusantium praesentium omnis eum labore distinctio, nisi iure
-                        dolorem inventore ut porro! Aliquid.</p>
-                </div>
-            </div>
-            <div class="row justify-content-center mt-5 mb-5" data-aos="fade-up">
-                <div class="col-lg-2 text-center color-primary-custom icon-list">
-                    <i class="fas fa-tachometer-alt display-5 p-4 rounded-circle bg-light"></i>
-                </div>
-                <div class="col-lg-9 align-self-center">
-                    <h5 class="fw-bolder">Lorem ipsum dolor sit amet</h5>
-                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Excepturi ex ea eligendi provident,
-                        fugit numquam modi asperiores accusantium praesentium omnis eum labore distinctio, nisi iure
-                        dolorem inventore ut porro! Aliquid.</p>
+                    <h5 class="fw-bolder">Input Data</h5>
+                    <p>Input yang dibutuhkan pada sistem ini adalah data RFM atau LRFM, jumlah k cluster.
+                        Selain itu penilain terhadap atribut model data juga dapat diberikan oleh pengguna namun optional karena terdapat bobot default pada sistem.
+                    </p>
                 </div>
             </div>
             <div class="row justify-content-center mt-5 mb-5" data-aos="fade-up">
@@ -132,10 +119,20 @@
                     <i class="fas fa-recycle display-5 p-4 rounded-circle bg-light"></i>
                 </div>
                 <div class="col-lg-9 align-self-center">
-                    <h5 class="fw-bolder">Lorem ipsum dolor sit amet</h5>
-                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Excepturi ex ea eligendi provident,
-                        fugit numquam modi asperiores accusantium praesentium omnis eum labore distinctio, nisi iure
-                        dolorem inventore ut porro! Aliquid.</p>
+                    <h5 class="fw-bolder">Proses</h5>
+                    <p>Data RFM atau LRFM dinormalisasi menggunakan MinMax Normalization. Penilain yang diberikan terhadap atribut model data diproses dengan AHP untuk menghasilkan bobot. Data yang telah dinormalisasi kemudian dikalikan dengan masing-masing bobot data.
+                        Selanjutnya proses clustering dilakukan terhadap data terbobot sebanyak jumlah k cluster. Objek data pada setiap cluster dihitung nilai Silhouette Coefficientnya untuk mengetahui kualitas cluster.
+                        Centroid dari hasil clustering terbaik diberikan rangking menggunakan TOPSIS dan pengujian Rank Consistency untuk mengetahui rekomendasi cluster terbaik. Terakhir evaluasi dilakukan terhadap karakteristik cluster.
+                    </p>
+                </div>
+            </div>
+            <div class="row justify-content-center mt-5 mb-5" data-aos="fade-up">
+                <div class="col-lg-2 text-center color-primary-custom icon-list">
+                    <i class="fas fa-poll display-5 p-4 rounded-circle bg-light"></i>
+                </div>
+                <div class="col-lg-9 align-self-center">
+                    <h5 class="fw-bolder">Output Hasil</h5>
+                    <p>Hasil akhirnya adalah rekomendasi cluster pelanggan beserta karakteristiknya disertai dengan saran startegi pemasaran.</p>
                 </div>
             </div>
         </div>
@@ -143,7 +140,7 @@
 
     <!-- Footer -->
     <footer class="bg-primary-custom">
-        <p class="text-center text-light pt-3">&copy COPYRIGHT 2022. Claser</p>
+        <p class="text-center text-light pt-3">&copy COPYRIGHT 2022. CLASER</p>
     </footer>
 
 
